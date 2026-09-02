@@ -27,7 +27,7 @@ example showing somebody else how to compute a field with your library.
 The engineering quality portion of the grade is assessed partly by whether
 another team could use your toolbox from this file alone.
 
-## Team Name: Bug Hunters - Amelia and Carissa
+## Team Name: 3, Amelia, Mitch, and Carissa
 
 ## Module Descriptions
 
