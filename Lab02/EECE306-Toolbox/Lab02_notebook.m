@@ -1,5 +1,5 @@
 %% EECE 306 Lab 2 notebook. Coordinate Systems, Points and Vector Components
-% *Team NN.* TODO replace with your team number and member names.
+% *Team 03 Mitchell Nazareth.* TODO replace with your team number and member names.
 %
 % Fill in every TODO, run |publish('Lab02_notebook.m')| from the toolbox
 % root, print the HTML to PDF, three to five pages.
@@ -43,14 +43,33 @@ disp('at (4, 0, 0), (Ar, Atheta, Aphi) ='); disp(em.coord.vecC2Sph(A0, [4 0 0]))
 % TODO two to four sentences. The vector did not change. Explain exactly
 % what did change, and why a position argument is therefore mandatory for
 % component conversion and meaningless for point conversion.
+%
+% The vector did not change, but the spherical components change.
+% This is because Cartesian components don't depend on the current
+% position, but spherical components do. 
 
 %% Interpretation
 % TODO what class of bug does the roundtrip test catch, and what class
 % does it miss. Name the invariant that catches what the roundtrip
 % misses, and say why it is reference free.
+%
+% the roundtrip test catches errors when converting from
+% Cartesian -> shperical -> Cartesian. This however does
+% not catch if the functions are implemented correctly.
+% This means it will test that our conversions are accurate
+% but not if we made a fatal mistake.
 
 %% Problems encountered
 % TODO honest account, or NONE.
+%
+% Similar to Lab01, getting setup was really the main issue here.
+% It took a while before I was at the point where I was ready to
+% work on the labs (and understand what I'm doing,) but once I
+% understood the task better, completing it was quick.
+%
+% Big thanks to Carissa and Amelia for helping me get caught up
+% for general information around the file structure and navigating
+% the resources!
 
 %% Full test suite
 runTests
