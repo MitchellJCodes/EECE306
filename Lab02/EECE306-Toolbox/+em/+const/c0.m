@@ -1,6 +1,6 @@
 function c = c0()
 %C0 Speed Of Light Constant c
-% c = em.const.c0() returns the scalar value of the speed of light.
+%   C = EM.CONST.C0() returns the scalar value of the speed of light.
 %
 % Example:
 % em.const.c0() % returns 2.9979e+08

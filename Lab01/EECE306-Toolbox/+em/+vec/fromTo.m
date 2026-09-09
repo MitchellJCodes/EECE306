@@ -1,6 +1,6 @@
 function d = fromTo(P, Q)
 %FROMTO Displacement Vector Function
-%  d = em.vec.fromTo(P, Q) returns the Nx3 displacement vector d (= Q - P) 
+%   D = EM.VEC.FROMTO(P, Q) returns the Nx3 displacement vector d (= Q - P) 
 % between two Nx3 vectors P and Q
 %
 % Example:

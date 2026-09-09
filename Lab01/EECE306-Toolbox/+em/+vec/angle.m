@@ -1,6 +1,6 @@
 function th = angle(A, B)
 %ANGLE Interior Angle Function theta
-% th = em.vec.angle(A, B) returns the Nx1 interior angle theta
+%   TH = EM.VEC.ANGLE(A, B) returns the Nx1 interior angle theta
 % between two Nx3 vector inputs A and B (in radians).
 %
 % Example:

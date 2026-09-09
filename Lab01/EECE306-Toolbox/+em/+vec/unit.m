@@ -1,7 +1,7 @@
 function u = unit(A)
 %UNIT Normalization Function u
-% u = em.vec.unit(A) returns the normalized Nx3 vector u of a non-zero Nx3 
-% vector A
+%   U = EM.VEC.UNIT(A) returns the normalized Nx3 vector u of a non-zero
+%   Nx3 vector A
 %
 % Example:
 % em.vec.unit([6, 8, 0]) % returns [0.6000, 0.8000, 0]
