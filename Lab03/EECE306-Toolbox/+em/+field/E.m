@@ -1,6 +1,5 @@
-function Ev = E(s, r)
-%E Summary of this function goes here
-%   Detailed explanation goes here
+function E_r = E(s, r)
+% number of observation points
 N = size(r,1);
 
 k = 1 / (4*pi*em.const.eps0());
@@ -21,8 +20,6 @@ qw = reshape(s.q .* s.w, 1, [], 1);
 % the squeeze function reshapes the answer into Nx3 format
 E_each = k .* qw .* R ./ (Rmag.^3);
 E_sum = sum(E_each, 2);
-Ev = reshape(E_sum, N, 3);
+E_r = reshape(E_sum, N, 3);
 
 end
-
-
