@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>EECE 306 Lab 1 notebook. Building the Toolbox, Constants and Vector Algebra</title>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    tags: 'all'
+  }
+};
+</script>
+<script type="text/javascript" async 
+src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+
+<style>
+body > * {
+  max-width: 42em;
+}
+body {
+  font-family: "Roboto Condensed", sans-serif;
+  padding-left: 7.5em;
+  padding-right: 7.5em;
+}
+pre, code {
+  max-width: 50em;
+  font-family: monospace;
+}
+pre.oct-code {
+  border: 1px solid Grey;
+  padding: 5px;
+}
+pre.oct-code-output {
+  margin-left: 2em;
+}
+span.comment {
+  color: ForestGreen;
+}
+span.keyword {
+  color: Blue;
+}
+span.string {
+  color: DarkOrchid;
+}
+footer {
+  margin-top: 2em;
+  font-size: 80%;
+}
+a, a:visited {
+  color: Blue;
+}
+h2 {
+  font-family: "Roboto Condensed", serif;
+  margin-top: 1.5em;
+}
+h2 a, h2 a:visited {
+  color: Black;
+}
+</style>
+
+</head>
+<body>
+<h1>EECE 306 Lab 1 notebook. Building the Toolbox, Constants and Vector Algebra</h1>
+
+<p><b>Team 3 Mitch Nazareth.</b> TODO replace with your team number and member names.</p>
+
+<p>Fill in every item marked TODO, then run <code>publish('Lab01_notebook.m')</code>
+from the toolbox root and print the resulting HTML to PDF. Three to five
+pages. The notebook is graded on required results, verification
+evidence, interpretation, honesty about problems, and presentation.</p>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#node1">Setup</a></li>
+<li><a href="#node2">Part I. Physical constants</a></li>
+<li><a href="#node3">Part II. Vector algebra on the required checks</a></li>
+<li><a href="#node4">Part II continued. Shape discipline</a></li>
+<li><a href="#node5">Interpretation</a></li>
+<li><a href="#node6">Problems encountered</a></li>
+<li><a href="#node7">Full test suite</a></li>
+</ul>
+<h2><a id="node1">Setup</a></h2>
+<p>This cell must run clean from the toolbox root.</p>
+
+<pre class="oct-code">clear; close all;
+disp(version)</pre>
+
+<pre class="oct-code-output">11.3.0
+</pre>
+<h2><a id="node2">Part I. Physical constants</a></h2>
+<p>The two derived constants must be computed, not typed in.</p>
+
+<pre class="oct-code">fprintf(<span class="string">'eps0 = %.10e F/m\n'</span>, em.const.eps0());
+fprintf(<span class="string">'mu0  = %.10e H/m\n'</span>, em.const.mu0());
+fprintf(<span class="string">'c0   = %.10e m/s\n'</span>, em.const.c0());
+fprintf(<span class="string">'eta0 = %.6f ohm\n'</span>,  em.const.eta0());
+em.test.assertClose(em.const.c0(), 1/sqrt(em.const.mu0()*em.const.eps0()), 1e-14, <span class="string">'c0 derived'</span>);
+em.test.assertClose(em.const.eta0(), sqrt(em.const.mu0()/em.const.eps0()), 1e-14, <span class="string">'eta0 derived'</span>);
+disp(<span class="string">'Derived constant checks passed.'</span>)</pre>
+
+<pre class="oct-code-output">eps0 = 8.8541878128e-12 F/m
+mu0  = 1.2566370614e-06 H/m
+c0   = 2.9979245808e+08 m/s
+eta0 = 376.730314 ohm
+Derived constant checks passed.
+</pre>
+<h2><a id="node3">Part II. Vector algebra on the required checks</a></h2>
+<pre class="oct-code">fprintf(<span class="string">'mag([3 4 0])  = %.15g   (expect 5 exactly)\n'</span>, em.vec.mag([3 4 0]));
+disp(<span class="string">'unit([3 4 0]) ='</span>); disp(em.vec.unit([3 4 0]))
+disp(<span class="string">'unit([0 0 0]) (expect all NaN) ='</span>); disp(em.vec.unit([0 0 0]))
+fprintf(<span class="string">'angle perpendicular = %.15g  (expect pi/2)\n'</span>, em.vec.angle([1 0 0],[0 1 0]));
+ap = em.vec.angle([1 0 0],[-1 0 0]);
+fprintf(<span class="string">'angle antiparallel  = %.15g, real = %d  (expect pi, 1)\n'</span>, ap, isreal(ap));
+disp(<span class="string">'fromTo([1 1 1],[2 3 4]) ='</span>); disp(em.vec.fromTo([1 1 1],[2 3 4]))</pre>
+
+<pre class="oct-code-output">mag([3 4 0])  = 5   (expect 5 exactly)
+unit([3 4 0]) =
+   0.6000   0.8000        0
+unit([0 0 0]) (expect all NaN) =
+   NaN   NaN   NaN
+angle perpendicular = 1.5707963267949  (expect pi/2)
+angle antiparallel  = 3.14159265358979, real = 1  (expect pi, 1)
+fromTo([1 1 1],[2 3 4]) =
+   1   2   3
+</pre>
+<h2><a id="node4">Part II continued. Shape discipline</a></h2>
+<p>Every function must accept Nx3 input and return the documented shape.</p>
+
+<pre class="oct-code">A = randn(100,3); B = randn(100,3);
+fprintf(<span class="string">'mag    input 100x3 output %s\n'</span>, mat2str(size(em.vec.mag(A))));
+fprintf(<span class="string">'unit   input 100x3 output %s\n'</span>, mat2str(size(em.vec.unit(A))));
+fprintf(<span class="string">'angle  input 100x3 output %s\n'</span>, mat2str(size(em.vec.angle(A,B))));
+fprintf(<span class="string">'fromTo input 100x3 output %s\n'</span>, mat2str(size(em.vec.fromTo(A,B))));</pre>
+
+<pre class="oct-code-output">mag    input 100x3 output [100 1]
+unit   input 100x3 output [100 3]
+angle  input 100x3 output [100 1]
+fromTo input 100x3 output [100 3]
+</pre>
+<h2><a id="node5">Interpretation</a></h2>
+<p>TODO three to six sentences in your own words. Why must c0 and eta0 be
+computed from eps0 and mu0 rather than typed in as numbers, and why is
+== the wrong way to compare a computed field value against a formula.</p>
+
+<p>c0 and eta0 are derrived from esp0 and mu0, and hardcoding
+these values introduces roudning errors that would
+be prevelent in later computations. Aditionally, it is
+easier to work with values we know are correct, rather
+than continuously changes fixed constants rounded
+to a point where we would reduce rounding errors.
+This makes the code easier to work with in the
+ long run.</p>
+<h2><a id="node6">Problems encountered</a></h2>
+<p>TODO state plainly anything that did not work and what was tried. An
+honest account of a failure earns more credit than silence. Write NONE
+if the session was clean.</p>
+
+<p>When I started working on these, I felt very confused aobut the
+file structure, where to find the starter files, and such. I
+know that this would have been much easier had I joined sooner.
+Aditionally, the team I joined had confusion about the
+structure of the submission, so we all had to sort of go
+back and fix some of the work. We have since got up and running
+on github, and things have now been much better. We made
+us all seperate branches, and we can push our work to main
+when it is deemed good enough to work. I think having our
+work on github will really bring us a long way this semester.</p>
+
+<p>- Mitch</p>
+<h2><a id="node7">Full test suite</a></h2>
+<pre class="oct-code">runTests</pre>
+
+<pre class="oct-code-output">
+EECE 306 toolbox test suite
+--------------------------------------------------------------
+11.3.0
+eps0 = 8.8541878128e-12 F/m
+mu0  = 1.2566370614e-06 H/m
+c0   = 2.9979245808e+08 m/s
+eta0 = 376.730314 ohm
+Derived constant checks passed.
+mag([3 4 0])  = 5   (expect 5 exactly)
+unit([3 4 0]) =
+   0.6000   0.8000        0
+unit([0 0 0]) (expect all NaN) =
+   NaN   NaN   NaN
+angle perpendicular = 1.5707963267949  (expect pi/2)
+angle antiparallel  = 3.14159265358979, real = 1  (expect pi, 1)
+fromTo([1 1 1],[2 3 4]) =
+   1   2   3
+mag    input 100x3 output [100 1]
+unit   input 100x3 output [100 3]
+angle  input 100x3 output [100 1]
+fromTo input 100x3 output [100 3]
+  PASS  test_lab01            0.01 s
+--------------------------------------------------------------
+  1 passed, 0 failed, 1 total
+  All tests passing.
+ 
+</pre>
+
+<footer>
+<hr>
+<a href="https://www.octave.org">Published with GNU Octave 11.3.0</a>
+</footer>
+<!--
+##### SOURCE BEGIN #####
+%% EECE 306 Lab 1 notebook. Building the Toolbox, Constants and Vector Algebra
+% *Team 3 Mitch Nazareth.* TODO replace with your team number and member names.
+%
+% Fill in every item marked TODO, then run |publish('Lab01_notebook.m')|
+% from the toolbox root and print the resulting HTML to PDF. Three to five
+% pages. The notebook is graded on required results, verification
+% evidence, interpretation, honesty about problems, and presentation.
+
+%% Setup
+% This cell must run clean from the toolbox root.
+clear; close all;
+disp(version)
+
+%% Part I. Physical constants
+% The two derived constants must be computed, not typed in.
+fprintf('eps0 = %.10e F/m\n', em.const.eps0());
+fprintf('mu0  = %.10e H/m\n', em.const.mu0());
+fprintf('c0   = %.10e m/s\n', em.const.c0());
+fprintf('eta0 = %.6f ohm\n',  em.const.eta0());
+em.test.assertClose(em.const.c0(), 1/sqrt(em.const.mu0()*em.const.eps0()), 1e-14, 'c0 derived');
+em.test.assertClose(em.const.eta0(), sqrt(em.const.mu0()/em.const.eps0()), 1e-14, 'eta0 derived');
+disp('Derived constant checks passed.')
+
+%% Part II. Vector algebra on the required checks
+fprintf('mag([3 4 0])  = %.15g   (expect 5 exactly)\n', em.vec.mag([3 4 0]));
+disp('unit([3 4 0]) ='); disp(em.vec.unit([3 4 0]))
+disp('unit([0 0 0]) (expect all NaN) ='); disp(em.vec.unit([0 0 0]))
+fprintf('angle perpendicular = %.15g  (expect pi/2)\n', em.vec.angle([1 0 0],[0 1 0]));
+ap = em.vec.angle([1 0 0],[-1 0 0]);
+fprintf('angle antiparallel  = %.15g, real = %d  (expect pi, 1)\n', ap, isreal(ap));
+disp('fromTo([1 1 1],[2 3 4]) ='); disp(em.vec.fromTo([1 1 1],[2 3 4]))
+
+%% Part II continued. Shape discipline
+% Every function must accept Nx3 input and return the documented shape.
+A = randn(100,3); B = randn(100,3);
+fprintf('mag    input 100x3 output %s\n', mat2str(size(em.vec.mag(A))));
+fprintf('unit   input 100x3 output %s\n', mat2str(size(em.vec.unit(A))));
+fprintf('angle  input 100x3 output %s\n', mat2str(size(em.vec.angle(A,B))));
+fprintf('fromTo input 100x3 output %s\n', mat2str(size(em.vec.fromTo(A,B))));
+
+%% Interpretation
+% TODO three to six sentences in your own words. Why must c0 and eta0 be
+% computed from eps0 and mu0 rather than typed in as numbers, and why is
+% == the wrong way to compare a computed field value against a formula.
+%
+% c0 and eta0 are derrived from esp0 and mu0, and hardcoding
+% these values introduces roudning errors that would
+% be prevelent in later computations. Aditionally, it is
+% easier to work with values we know are correct, rather
+% than continuously changes fixed constants rounded
+% to a point where we would reduce rounding errors.
+% This makes the code easier to work with in the
+%  long run.
+
+%% Problems encountered
+% TODO state plainly anything that did not work and what was tried. An
+% honest account of a failure earns more credit than silence. Write NONE
+% if the session was clean.
+%
+% When I started working on these, I felt very confused aobut the
+% file structure, where to find the starter files, and such. I
+% know that this would have been much easier had I joined sooner.
+% Aditionally, the team I joined had confusion about the
+% structure of the submission, so we all had to sort of go
+% back and fix some of the work. We have since got up and running
+% on github, and things have now been much better. We made
+% us all seperate branches, and we can push our work to main
+% when it is deemed good enough to work. I think having our
+% work on github will really bring us a long way this semester.
+%
+% - Mitch
+
+%% Full test suite
+runTests
+##### SOURCE END #####
+-->
+</body>
+</html>
