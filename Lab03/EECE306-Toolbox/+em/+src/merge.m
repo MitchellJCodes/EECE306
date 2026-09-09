@@ -1,6 +1,6 @@
 function s = merge(s1, s2)
-%MERGE Summary of this function goes here
-%   Detailed explanation goes here
+% strcmp function checks to see if s1 and s2 test are the same type
+
 if ~strcmp(s1.type, s2.type)
     error('charge and current cannot merge together ');
 end
@@ -17,4 +17,3 @@ elseif strcmp(s.type, 'current')
 end
 
 end
-
