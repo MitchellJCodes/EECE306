@@ -121,8 +121,10 @@ fprintf(<span class="string">'max |E| on the same plane = %.3e V/m\n'</span>, ma
 <span class="comment">% TODO justify your absolute tolerance for the first number by comparing</span>
 <span class="comment">% it against the second. State the threshold you chose and why.</span>
 <span class="comment">%</span>
-<span class="comment">% The two equal charges push the electric field euqally in opposite x directions,</span>
-<span class="comment">% which cancels out, so max |Ex| should be 0, and 10^10 should be a small enough tolerance.</span>
+<span class="comment">% The two equal charges push the electric field euqally in opposite</span>
+<span class="comment">% x directions,</span>
+<span class="comment">% which cancels out, so max |Ex| should be 0, and 10^10 should</span>
+<span class="comment">% be a small enough tolerance.</span>
 </pre>
 
 <pre class="oct-code-output">max |Ex| on bisector      = 0.000e+00 V/m
@@ -146,8 +148,11 @@ em.viz.quiver2(@(r) em.field.E(s2, r), [-0.5 0.5], [-0.5 0.5], 15, ...
 <span class="comment">% TODO one or two sentences on why the raw plot is unreadable and what</span>
 <span class="comment">% information the normalized plot gives up in exchange.</span>
 <span class="comment">%</span>
-<span class="comment">% Normalizing the plot makes it easier to see the direction of the field grid,</span>
-<span class="comment">% as the arrows would otherwise have varying lengths. This however loses the intesity at ecah point.</span>
+<span class="comment">% Normalizing the plot makes it easier to see the direction</span>
+<span class="comment">% of the field grid,as the arrows would otherwise have</span>
+<span class="comment">% varying lengths.</span>
+<span class="comment">%</span>
+<span class="comment">% This however loses the intesity at ecah point.</span>
 </pre>
 
 <pre class="oct-code-output">warning: using the fltk graphics toolkit is discouraged
@@ -161,7 +166,7 @@ The qt toolkit is recommended instead.
 tic; em.field.E(s2, pts5k); t = toc;
 fprintf(<span class="string">'em.field.E on 5000 points took %.3f s  (requirement, under 2 s)\n'</span>, t);</pre>
 
-<pre class="oct-code-output">em.field.E on 5000 points took 0.001 s  (requirement, under 2 s)
+<pre class="oct-code-output">em.field.E on 5000 points took 0.002 s  (requirement, under 2 s)
 </pre>
 <h2><a id="node7">Interpretation</a></h2>
 <p>Amelia Harris, Mitch Nazareth, and Carissa McWilliams three to six sentences. Three tests were run above, closed form,
@@ -202,7 +207,7 @@ mag    input 100x3 output [100 1]
 unit   input 100x3 output [100 3]
 angle  input 100x3 output [100 1]
 fromTo input 100x3 output [100 3]
-  PASS  test_lab01            0.09 s
+  PASS  test_lab01            0.08 s
 spherical   roundtrip max error = 5.947e-15
 cylindrical roundtrip max error = 2.047e-15
 c2sph([0 0 1])  =
@@ -218,7 +223,7 @@ at (0, 5, 0), (Ar, Atheta, Aphi) =
    3.0000e+00   1.8370e-16  -2.0000e+00
 at (4, 0, 0), (Ar, Atheta, Aphi) =
    2.0000e+00   1.2246e-16   3.0000e+00
-  PASS  test_lab02            0.05 s
+  PASS  test_lab02            0.04 s
    r (m)    relative error
     1.0000         0
     2.0000         0
@@ -233,7 +238,7 @@ at (4, 0, 0), (Ar, Atheta, Aphi) =
 max |Ex| on bisector      = 0.000e+00 V/m
 max |E| on the same plane = 6.298e+02 V/m
 |E(r)| / |E(2r)| = 8.0003   (expect near 8 for a dipole)
-em.field.E on 5000 points took 0.001 s  (requirement, under 2 s)
+em.field.E on 5000 points took 0.002 s  (requirement, under 2 s)
   PASS  test_lab03            0.32 s
 --------------------------------------------------------------
   3 passed, 0 failed, 3 total
@@ -281,8 +286,10 @@ fprintf('max |E| on the same plane = %.3e V/m\n', max(em.vec.mag(Ev)));
 % TODO justify your absolute tolerance for the first number by comparing
 % it against the second. State the threshold you chose and why.
 %
-% The two equal charges push the electric field euqally in opposite x directions,
-% which cancels out, so max |Ex| should be 0, and 10^10 should be a small enough tolerance.
+% The two equal charges push the electric field euqally in opposite
+% x directions,
+% which cancels out, so max |Ex| should be 0, and 10^10 should
+% be a small enough tolerance.
 
 %% Dipole far field
 sd = em.src.merge(em.src.pointCharge(1e-9,[0 0 0.05]), em.src.pointCharge(-1e-9,[0 0 -0.05]));
@@ -300,8 +307,11 @@ em.viz.quiver2(@(r) em.field.E(s2, r), [-0.5 0.5], [-0.5 0.5], 15, ...
 % TODO one or two sentences on why the raw plot is unreadable and what
 % information the normalized plot gives up in exchange.
 %
-% Normalizing the plot makes it easier to see the direction of the field grid,
-% as the arrows would otherwise have varying lengths. This however loses the intesity at ecah point.
+% Normalizing the plot makes it easier to see the direction
+% of the field grid,as the arrows would otherwise have
+% varying lengths.
+%
+% This however loses the intesity at ecah point.
 
 %% Timing at N = 5000
 pts5k = randn(5000,3) + 5;
