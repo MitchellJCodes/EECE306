@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>EECE 306 Lab 3 notebook. Point Charges, Superposition, and the Field Engine</title>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    tags: 'all'
+  }
+};
+</script>
+<script type="text/javascript" async 
+src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+
+<style>
+body > * {
+  max-width: 42em;
+}
+body {
+  font-family: "Roboto Condensed", sans-serif;
+  padding-left: 7.5em;
+  padding-right: 7.5em;
+}
+pre, code {
+  max-width: 50em;
+  font-family: monospace;
+}
+pre.oct-code {
+  border: 1px solid Grey;
+  padding: 5px;
+}
+pre.oct-code-output {
+  margin-left: 2em;
+}
+span.comment {
+  color: ForestGreen;
+}
+span.keyword {
+  color: Blue;
+}
+span.string {
+  color: DarkOrchid;
+}
+footer {
+  margin-top: 2em;
+  font-size: 80%;
+}
+a, a:visited {
+  color: Blue;
+}
+h2 {
+  font-family: "Roboto Condensed", serif;
+  margin-top: 1.5em;
+}
+h2 a, h2 a:visited {
+  color: Black;
+}
+</style>
+
+</head>
+<body>
+<h1>EECE 306 Lab 3 notebook. Point Charges, Superposition, and the Field Engine</h1>
+
+<p><b>Team 3 Carissa McWilliams, Amelia Harris, and Mitch Nazareth</b> TODO replace with your team number and member names.</p>
+
+<p>Fill in every TODO, run <code>publish('Lab03_notebook.m')</code> from the toolbox
+root, print the HTML to PDF, three to five pages.</p>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#node1">Setup</a></li>
+<li><a href="#node2">Closed form comparison at ten radii</a></li>
+<li><a href="#node3">Symmetry on the bisector plane</a></li>
+<li><a href="#node4">Dipole far field</a></li>
+<li><a href="#node5">The picture, raw and normalized</a></li>
+<li><a href="#node6">Timing at N = 5000</a></li>
+<li><a href="#node7">Interpretation</a></li>
+<li><a href="#node8">Problems encountered</a></li>
+<li><a href="#node9">Full test suite</a></li>
+</ul>
+<h2><a id="node1">Setup</a></h2>
+<pre class="oct-code">clear; close all;
+rng(306);
+e0 = em.const.eps0();</pre>
+<h2><a id="node2">Closed form comparison at ten radii</a></h2>
+<pre class="oct-code">Q = 2e-9;
+s = em.src.pointCharge(Q, [0 0 0]);
+radii = (1:10)<span class="string">';</span>
+Enum  = em.field.E(s, [radii zeros(10,2)]);
+Eref  = Q ./ (4*pi*e0*radii.^2);
+relerr = abs(Enum(:,1) - Eref) ./ Eref;
+disp(<span class="string">'   r (m)    relative error'</span>)
+disp([radii relerr])</pre>
+
+<pre class="oct-code-output">   r (m)    relative error
+    1.0000         0
+    2.0000         0
+    3.0000         0
+    4.0000         0
+    5.0000         0
+    6.0000         0
+    7.0000         0
+    8.0000         0
+    9.0000    0.0000
+   10.0000         0
+</pre>
+<h2><a id="node3">Symmetry on the bisector plane</a></h2>
+<p>Two equal charges on the x axis. On the plane x = 0 the x component
+must vanish.</p>
+
+<pre class="oct-code">q1 = em.src.pointCharge(1e-9, [-0.1 0 0]);
+q2 = em.src.pointCharge(1e-9, [ 0.1 0 0]);
+s2 = em.src.merge(q1, q2);
+pts = [zeros(200,1) randn(200,2)];
+Ev  = em.field.E(s2, pts);
+fprintf(<span class="string">'max |Ex| on bisector      = %.3e V/m\n'</span>, max(abs(Ev(:,1))));
+fprintf(<span class="string">'max |E| on the same plane = %.3e V/m\n'</span>, max(em.vec.mag(Ev)));
+<span class="comment">% TODO justify your absolute tolerance for the first number by comparing</span>
+<span class="comment">% it against the second. State the threshold you chose and why.</span>
+<span class="comment">%</span>
+<span class="comment">% The two equal charges push the electric field euqally in opposite</span>
+<span class="comment">% x directions,</span>
+<span class="comment">% which cancels out, so max |Ex| should be 0, and 10^10 should</span>
+<span class="comment">% be a small enough tolerance.</span>
+</pre>
+
+<pre class="oct-code-output">max |Ex| on bisector      = 0.000e+00 V/m
+max |E| on the same plane = 6.298e+02 V/m
+</pre>
+<h2><a id="node4">Dipole far field</a></h2>
+<pre class="oct-code">sd = em.src.merge(em.src.pointCharge(1e-9,[0 0 0.05]), em.src.pointCharge(-1e-9,[0 0 -0.05]));
+E1 = em.vec.mag(em.field.E(sd, [0 0 10]));
+E2 = em.vec.mag(em.field.E(sd, [0 0 20]));
+fprintf(<span class="string">'|E(r)| / |E(2r)| = %.4f   (expect near 8 for a dipole)\n'</span>, E1/E2);</pre>
+
+<pre class="oct-code-output">|E(r)| / |E(2r)| = 8.0003   (expect near 8 for a dipole)
+</pre>
+<h2><a id="node5">The picture, raw and normalized</a></h2>
+<pre class="oct-code">figure;
+em.viz.quiver2(@(r) em.field.E(s2, r), [-0.5 0.5], [-0.5 0.5], 15, ...
+    struct(<span class="string">'normalize'</span>, false, <span class="string">'title'</span>, <span class="string">'Two equal charges, raw magnitudes'</span>));
+figure;
+em.viz.quiver2(@(r) em.field.E(s2, r), [-0.5 0.5], [-0.5 0.5], 15, ...
+    struct(<span class="string">'normalize'</span>, true, <span class="string">'title'</span>, <span class="string">'Two equal charges, direction only'</span>));
+<span class="comment">% TODO one or two sentences on why the raw plot is unreadable and what</span>
+<span class="comment">% information the normalized plot gives up in exchange.</span>
+<span class="comment">%</span>
+<span class="comment">% Normalizing the plot makes it easier to see the direction</span>
+<span class="comment">% of the field grid,as the arrows would otherwise have</span>
+<span class="comment">% varying lengths.</span>
+<span class="comment">%</span>
+<span class="comment">% This however loses the intesity at ecah point.</span>
+</pre>
+<img src="Lab03_notebook-1.png" alt="Lab03_notebook-1.png"><img src="Lab03_notebook-2.png" alt="Lab03_notebook-2.png"><h2><a id="node6">Timing at N = 5000</a></h2>
+<pre class="oct-code">pts5k = randn(5000,3) + 5;
+tic; em.field.E(s2, pts5k); t = toc;
+fprintf(<span class="string">'em.field.E on 5000 points took %.3f s  (requirement, under 2 s)\n'</span>, t);</pre>
+
+<pre class="oct-code-output">em.field.E on 5000 points took 0.001 s  (requirement, under 2 s)
+</pre>
+<h2><a id="node7">Interpretation</a></h2>
+<p>Amelia Harris, Mitch Nazareth, and Carissa McWilliams three to six sentences. Three tests were run above, closed form,
+symmetry, and a scaling law. Say what each one can catch that the other
+two cannot.</p>
+<h2><a id="node8">Problems encountered</a></h2>
+<p>Mitch Nazareth, Amelia Harris, and Carissa McWilliams honest account, or NONE.</p>
+
+<p>We had some mistakes from Lab 1 and Lab 2 to correct before we could begin on this document.
+Particularly, we did not specify some vectors to have Nx3 inputs. Leading to tests failing
+Interestingly enough, the tests still ran (and reported passing) when run using Octave,
+althogh we know that they were specified wrong.</p>
+
+<p>Finally, version controlling, with seperate branches for each individual's work on github
+massively enhanced our ability to collaborate! :)</p>
+<h2><a id="node9">Full test suite</a></h2>
+<pre class="oct-code">runTests</pre>
+
+<pre class="oct-code-output">
+EECE 306 toolbox test suite
+--------------------------------------------------------------
+11.3.0
+eps0 = 8.8541878128e-12 F/m
+mu0  = 1.2566370614e-06 H/m
+c0   = 2.9979245808e+08 m/s
+eta0 = 376.730314 ohm
+Derived constant checks passed.
+mag([3 4 0])  = 5   (expect 5 exactly)
+unit([3 4 0]) =
+   0.6000   0.8000        0
+unit([0 0 0]) (expect all NaN) =
+   NaN   NaN   NaN
+angle perpendicular = 1.5707963267949  (expect pi/2)
+angle antiparallel  = 3.14159265358979, real = 1  (expect pi, 1)
+fromTo([1 1 1],[2 3 4]) =
+   1   2   3
+mag    input 100x3 output [100 1]
+unit   input 100x3 output [100 3]
+angle  input 100x3 output [100 1]
+fromTo input 100x3 output [100 3]
+  PASS  test_lab01            0.25 s
+spherical   roundtrip max error = 5.947e-15
+cylindrical roundtrip max error = 2.047e-15
+c2sph([0 0 1])  =
+   1   0   0
+c2sph([0 0 -1]) =
+   1.0000   3.1416        0
+phi in the four quadrants = 0.7854 2.3562 3.9270 5.4978 rad
+all inside [0, 2*pi) = 1
+vector roundtrip (spherical pair) max error = 8.882e-16
+magnitude change under conversion max       = 8.882e-16
+vector roundtrip (cylindrical pair) max error = 6.280e-16
+at (0, 5, 0), (Ar, Atheta, Aphi) =
+   3.0000e+00   1.8370e-16  -2.0000e+00
+at (4, 0, 0), (Ar, Atheta, Aphi) =
+   2.0000e+00   1.2246e-16   3.0000e+00
+  PASS  test_lab02            0.03 s
+   r (m)    relative error
+    1.0000         0
+    2.0000         0
+    3.0000         0
+    4.0000         0
+    5.0000         0
+    6.0000         0
+    7.0000         0
+    8.0000         0
+    9.0000    0.0000
+   10.0000         0
+max |Ex| on bisector      = 0.000e+00 V/m
+max |E| on the same plane = 6.298e+02 V/m
+|E(r)| / |E(2r)| = 8.0003   (expect near 8 for a dipole)
+em.field.E on 5000 points took 0.004 s  (requirement, under 2 s)
+  PASS  test_lab03            0.86 s
+--------------------------------------------------------------
+  3 passed, 0 failed, 3 total
+  All tests passing.
+ 
+</pre>
+<img src="Lab03_notebook-3.png" alt="Lab03_notebook-3.png"><img src="Lab03_notebook-4.png" alt="Lab03_notebook-4.png">
+<footer>
+<hr>
+<a href="https://www.octave.org">Published with GNU Octave 11.3.0</a>
+</footer>
+<!--
+##### SOURCE BEGIN #####
+%% EECE 306 Lab 3 notebook. Point Charges, Superposition, and the Field Engine
+% *Team 3 Carissa McWilliams, Amelia Harris, and Mitch Nazareth* TODO replace with your team number and member names.
+%
+% Fill in every TODO, run |publish('Lab03_notebook.m')| from the toolbox
+% root, print the HTML to PDF, three to five pages.
+
+%% Setup
+clear; close all;
+rng(306);
+e0 = em.const.eps0();
+
+%% Closed form comparison at ten radii
+Q = 2e-9;
+s = em.src.pointCharge(Q, [0 0 0]);
+radii = (1:10)';
+Enum  = em.field.E(s, [radii zeros(10,2)]);
+Eref  = Q ./ (4*pi*e0*radii.^2);
+relerr = abs(Enum(:,1) - Eref) ./ Eref;
+disp('   r (m)    relative error')
+disp([radii relerr])
+
+%% Symmetry on the bisector plane
+% Two equal charges on the x axis. On the plane x = 0 the x component
+% must vanish.
+q1 = em.src.pointCharge(1e-9, [-0.1 0 0]);
+q2 = em.src.pointCharge(1e-9, [ 0.1 0 0]);
+s2 = em.src.merge(q1, q2);
+pts = [zeros(200,1) randn(200,2)];
+Ev  = em.field.E(s2, pts);
+fprintf('max |Ex| on bisector      = %.3e V/m\n', max(abs(Ev(:,1))));
+fprintf('max |E| on the same plane = %.3e V/m\n', max(em.vec.mag(Ev)));
+% TODO justify your absolute tolerance for the first number by comparing
+% it against the second. State the threshold you chose and why.
+%
+% The two equal charges push the electric field euqally in opposite
+% x directions,
+% which cancels out, so max |Ex| should be 0, and 10^10 should
+% be a small enough tolerance.
+
+%% Dipole far field
+sd = em.src.merge(em.src.pointCharge(1e-9,[0 0 0.05]), em.src.pointCharge(-1e-9,[0 0 -0.05]));
+E1 = em.vec.mag(em.field.E(sd, [0 0 10]));
+E2 = em.vec.mag(em.field.E(sd, [0 0 20]));
+fprintf('|E(r)| / |E(2r)| = %.4f   (expect near 8 for a dipole)\n', E1/E2);
+
+%% The picture, raw and normalized
+figure;
+em.viz.quiver2(@(r) em.field.E(s2, r), [-0.5 0.5], [-0.5 0.5], 15, ...
+    struct('normalize', false, 'title', 'Two equal charges, raw magnitudes'));
+figure;
+em.viz.quiver2(@(r) em.field.E(s2, r), [-0.5 0.5], [-0.5 0.5], 15, ...
+    struct('normalize', true, 'title', 'Two equal charges, direction only'));
+% TODO one or two sentences on why the raw plot is unreadable and what
+% information the normalized plot gives up in exchange.
+%
+% Normalizing the plot makes it easier to see the direction
+% of the field grid,as the arrows would otherwise have
+% varying lengths.
+%
+% This however loses the intesity at ecah point.
+
+%% Timing at N = 5000
+pts5k = randn(5000,3) + 5;
+tic; em.field.E(s2, pts5k); t = toc;
+fprintf('em.field.E on 5000 points took %.3f s  (requirement, under 2 s)\n', t);
+
+%% Interpretation
+% Amelia Harris, Mitch Nazareth, and Carissa McWilliams three to six sentences. Three tests were run above, closed form,
+% symmetry, and a scaling law. Say what each one can catch that the other
+% two cannot.
+
+%% Problems encountered
+% Mitch Nazareth, Amelia Harris, and Carissa McWilliams honest account, or NONE.
+%
+% We had some mistakes from Lab 1 and Lab 2 to correct before we could begin on this document.
+% Particularly, we did not specify some vectors to have Nx3 inputs. Leading to tests failing
+% Interestingly enough, the tests still ran (and reported passing) when run using Octave,
+% althogh we know that they were specified wrong.
+%
+% Finally, version controlling, with seperate branches for each individual's work on github
+% massively enhanced our ability to collaborate! :)
+
+%% Full test suite
+runTests
+##### SOURCE END #####
+-->
+</body>
+</html>
