@@ -1,6 +1,4 @@
-function h = quiver2(F, xlim, ylim, N, opts)
-%QUIVER2 Summary of this function goes here
-%   Detailed explanation goes here
+function quiver2(F, xlim, ylim, N, opts)
 
 figure
 % Create N evenly spaced x and y coordinates within the plot limits
