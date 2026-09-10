@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>EECE 306 Lab 2 notebook. Coordinate Systems, Points and Vector Components</title>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    tags: 'all'
+  }
+};
+</script>
+<script type="text/javascript" async 
+src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+
+<style>
+body > * {
+  max-width: 42em;
+}
+body {
+  font-family: "Roboto Condensed", sans-serif;
+  padding-left: 7.5em;
+  padding-right: 7.5em;
+}
+pre, code {
+  max-width: 50em;
+  font-family: monospace;
+}
+pre.oct-code {
+  border: 1px solid Grey;
+  padding: 5px;
+}
+pre.oct-code-output {
+  margin-left: 2em;
+}
+span.comment {
+  color: ForestGreen;
+}
+span.keyword {
+  color: Blue;
+}
+span.string {
+  color: DarkOrchid;
+}
+footer {
+  margin-top: 2em;
+  font-size: 80%;
+}
+a, a:visited {
+  color: Blue;
+}
+h2 {
+  font-family: "Roboto Condensed", serif;
+  margin-top: 1.5em;
+}
+h2 a, h2 a:visited {
+  color: Black;
+}
+</style>
+
+</head>
+<body>
+<h1>EECE 306 Lab 2 notebook. Coordinate Systems, Points and Vector Components</h1>
+
+<p><b>Team 03 Carissa McWilliams, Amelia Harris, and Mitch Nazareth.</b> TODO replace with your team number and member names.</p>
+
+<p>Fill in every TODO, run <code>publish('Lab02_notebook.m')</code> from the toolbox
+root, print the HTML to PDF, three to five pages.</p>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#node1">Setup</a></li>
+<li><a href="#node2">Point roundtrips, 1000 random points</a></li>
+<li><a href="#node3">Poles and the phi convention</a></li>
+<li><a href="#node4">Vector component roundtrips and the invariant</a></li>
+<li><a href="#node5">The two position demonstration</a></li>
+<li><a href="#node6">Interpretation</a></li>
+<li><a href="#node7">Problems encountered</a></li>
+<li><a href="#node8">Full test suite</a></li>
+</ul>
+<h2><a id="node1">Setup</a></h2>
+<pre class="oct-code">clear; close all;
+rng(306);</pre>
+<h2><a id="node2">Point roundtrips, 1000 random points</a></h2>
+<pre class="oct-code">r = randn(1000,3);
+esph = max(em.vec.mag(em.coord.sph2c(em.coord.c2sph(r)) - r));
+ecyl = max(em.vec.mag(em.coord.cyl2c(em.coord.c2cyl(r)) - r));
+fprintf(<span class="string">'spherical   roundtrip max error = %.3e\n'</span>, esph);
+fprintf(<span class="string">'cylindrical roundtrip max error = %.3e\n'</span>, ecyl);</pre>
+
+<pre class="oct-code-output">spherical   roundtrip max error = 5.947e-15
+cylindrical roundtrip max error = 2.047e-15
+</pre>
+<h2><a id="node3">Poles and the phi convention</a></h2>
+<pre class="oct-code">disp(<span class="string">'c2sph([0 0 1])  ='</span>); disp(em.coord.c2sph([0 0 1]))
+disp(<span class="string">'c2sph([0 0 -1]) ='</span>); disp(em.coord.c2sph([0 0 -1]))
+q = [ 1 1 0; -1 1 0; -1 -1 0; 1 -1 0 ];
+p = em.coord.c2cyl(q);
+fprintf(<span class="string">'phi in the four quadrants = %.4f %.4f %.4f %.4f rad\n'</span>, p(:,2));
+fprintf(<span class="string">'all inside [0, 2*pi) = %d\n'</span>, all(p(:,2) &gt;= 0 &amp; p(:,2) &lt; 2*pi));</pre>
+
+<pre class="oct-code-output">c2sph([0 0 1])  =
+   1   0   0
+c2sph([0 0 -1]) =
+   1.0000   3.1416        0
+phi in the four quadrants = 0.7854 2.3562 3.9270 5.4978 rad
+all inside [0, 2*pi) = 1
+</pre>
+<h2><a id="node4">Vector component roundtrips and the invariant</a></h2>
+<pre class="oct-code">A  = randn(1000,3);
+As = em.coord.vecC2Sph(A, r);
+ev = max(em.vec.mag(em.coord.vecSph2C(As, r) - A));
+em_ = max(abs(em.vec.mag(As) - em.vec.mag(A)));
+fprintf(<span class="string">'vector roundtrip (spherical pair) max error = %.3e\n'</span>, ev);
+fprintf(<span class="string">'magnitude change under conversion max       = %.3e\n'</span>, em_);
+Ac = em.coord.vecC2Cyl(A, r);
+ev2 = max(em.vec.mag(em.coord.vecCyl2C(Ac, r) - A));
+fprintf(<span class="string">'vector roundtrip (cylindrical pair) max error = %.3e\n'</span>, ev2);</pre>
+
+<pre class="oct-code-output">vector roundtrip (spherical pair) max error = 8.882e-16
+magnitude change under conversion max       = 8.882e-16
+vector roundtrip (cylindrical pair) max error = 6.280e-16
+</pre>
+<h2><a id="node5">The two position demonstration</a></h2>
+<p>The same Cartesian vector A = 2x + 3y, expressed in spherical
+components at two different positions.</p>
+
+<pre class="oct-code">A0 = [2 3 0];
+disp(<span class="string">'at (0, 5, 0), (Ar, Atheta, Aphi) ='</span>); disp(em.coord.vecC2Sph(A0, [0 5 0]))
+disp(<span class="string">'at (4, 0, 0), (Ar, Atheta, Aphi) ='</span>); disp(em.coord.vecC2Sph(A0, [4 0 0]))
+<span class="comment">% TODO two to four sentences. The vector did not change. Explain exactly</span>
+<span class="comment">% what did change, and why a position argument is therefore mandatory for</span>
+<span class="comment">% component conversion and meaningless for point conversion.</span>
+<span class="comment">%</span>
+<span class="comment">% The vector did not change, but the spherical components change.</span>
+<span class="comment">% This is because Cartesian components don't depend on the current</span>
+<span class="comment">% position, but spherical components do.</span>
+</pre>
+
+<pre class="oct-code-output">at (0, 5, 0), (Ar, Atheta, Aphi) =
+   3.0000e+00   1.8370e-16  -2.0000e+00
+at (4, 0, 0), (Ar, Atheta, Aphi) =
+   2.0000e+00   1.2246e-16   3.0000e+00
+</pre>
+<h2><a id="node6">Interpretation</a></h2>
+<p>TODO what class of bug does the roundtrip test catch, and what class
+does it miss. Name the invariant that catches what the roundtrip
+misses, and say why it is reference free.</p>
+
+<p>the roundtrip test catches errors when converting from
+Cartesian -&gt; shperical -&gt; Cartesian. This however does
+not catch if the functions are implemented correctly.
+This means it will test that our conversions are accurate
+but not if we made a fatal mistake.</p>
+<h2><a id="node7">Problems encountered</a></h2>
+<p>TODO honest account, or NONE.</p>
+
+<p>Similar to Lab01, getting setup was really the main issue here.
+It took a while before I was at the point where I was ready to
+work on the labs (and understand what I'm doing,) but once I
+understood the task better, completing it was quick.</p>
+
+<p>Big thanks to Carissa and Amelia for helping me get caught up
+for general information around the file structure and navigating
+the resources!</p>
+<h2><a id="node8">Full test suite</a></h2>
+<pre class="oct-code">runTests</pre>
+
+<pre class="oct-code-output">
+EECE 306 toolbox test suite
+--------------------------------------------------------------
+11.3.0
+eps0 = 8.8541878128e-12 F/m
+mu0  = 1.2566370614e-06 H/m
+c0   = 2.9979245808e+08 m/s
+eta0 = 376.730314 ohm
+Derived constant checks passed.
+mag([3 4 0])  = 5   (expect 5 exactly)
+unit([3 4 0]) =
+   0.6000   0.8000        0
+unit([0 0 0]) (expect all NaN) =
+   NaN   NaN   NaN
+angle perpendicular = 1.5707963267949  (expect pi/2)
+angle antiparallel  = 3.14159265358979, real = 1  (expect pi, 1)
+fromTo([1 1 1],[2 3 4]) =
+   1   2   3
+mag    input 100x3 output [100 1]
+unit   input 100x3 output [100 3]
+angle  input 100x3 output [100 1]
+fromTo input 100x3 output [100 3]
+  PASS  test_lab01            0.01 s
+spherical   roundtrip max error = 5.947e-15
+cylindrical roundtrip max error = 2.047e-15
+c2sph([0 0 1])  =
+   1   0   0
+c2sph([0 0 -1]) =
+   1.0000   3.1416        0
+phi in the four quadrants = 0.7854 2.3562 3.9270 5.4978 rad
+all inside [0, 2*pi) = 1
+vector roundtrip (spherical pair) max error = 8.882e-16
+magnitude change under conversion max       = 8.882e-16
+vector roundtrip (cylindrical pair) max error = 6.280e-16
+at (0, 5, 0), (Ar, Atheta, Aphi) =
+   3.0000e+00   1.8370e-16  -2.0000e+00
+at (4, 0, 0), (Ar, Atheta, Aphi) =
+   2.0000e+00   1.2246e-16   3.0000e+00
+  PASS  test_lab02            0.01 s
+--------------------------------------------------------------
+  2 passed, 0 failed, 2 total
+  All tests passing.
+ 
+</pre>
+
+<footer>
+<hr>
+<a href="https://www.octave.org">Published with GNU Octave 11.3.0</a>
+</footer>
+<!--
+##### SOURCE BEGIN #####
+%% EECE 306 Lab 2 notebook. Coordinate Systems, Points and Vector Components
+% *Team 03 Carissa McWilliams, Amelia Harris, and Mitch Nazareth.* TODO replace with your team number and member names.
+%
+% Fill in every TODO, run |publish('Lab02_notebook.m')| from the toolbox
+% root, print the HTML to PDF, three to five pages.
+
+%% Setup
+clear; close all;
+rng(306);
+
+%% Point roundtrips, 1000 random points
+r = randn(1000,3);
+esph = max(em.vec.mag(em.coord.sph2c(em.coord.c2sph(r)) - r));
+ecyl = max(em.vec.mag(em.coord.cyl2c(em.coord.c2cyl(r)) - r));
+fprintf('spherical   roundtrip max error = %.3e\n', esph);
+fprintf('cylindrical roundtrip max error = %.3e\n', ecyl);
+
+%% Poles and the phi convention
+disp('c2sph([0 0 1])  ='); disp(em.coord.c2sph([0 0 1]))
+disp('c2sph([0 0 -1]) ='); disp(em.coord.c2sph([0 0 -1]))
+q = [ 1 1 0; -1 1 0; -1 -1 0; 1 -1 0 ];
+p = em.coord.c2cyl(q);
+fprintf('phi in the four quadrants = %.4f %.4f %.4f %.4f rad\n', p(:,2));
+fprintf('all inside [0, 2*pi) = %d\n', all(p(:,2) >= 0 & p(:,2) < 2*pi));
+
+%% Vector component roundtrips and the invariant
+A  = randn(1000,3);
+As = em.coord.vecC2Sph(A, r);
+ev = max(em.vec.mag(em.coord.vecSph2C(As, r) - A));
+em_ = max(abs(em.vec.mag(As) - em.vec.mag(A)));
+fprintf('vector roundtrip (spherical pair) max error = %.3e\n', ev);
+fprintf('magnitude change under conversion max       = %.3e\n', em_);
+Ac = em.coord.vecC2Cyl(A, r);
+ev2 = max(em.vec.mag(em.coord.vecCyl2C(Ac, r) - A));
+fprintf('vector roundtrip (cylindrical pair) max error = %.3e\n', ev2);
+
+%% The two position demonstration
+% The same Cartesian vector A = 2x + 3y, expressed in spherical
+% components at two different positions.
+A0 = [2 3 0];
+disp('at (0, 5, 0), (Ar, Atheta, Aphi) ='); disp(em.coord.vecC2Sph(A0, [0 5 0]))
+disp('at (4, 0, 0), (Ar, Atheta, Aphi) ='); disp(em.coord.vecC2Sph(A0, [4 0 0]))
+% TODO two to four sentences. The vector did not change. Explain exactly
+% what did change, and why a position argument is therefore mandatory for
+% component conversion and meaningless for point conversion.
+%
+% The vector did not change, but the spherical components change.
+% This is because Cartesian components don't depend on the current
+% position, but spherical components do.
+
+%% Interpretation
+% TODO what class of bug does the roundtrip test catch, and what class
+% does it miss. Name the invariant that catches what the roundtrip
+% misses, and say why it is reference free.
+%
+% the roundtrip test catches errors when converting from
+% Cartesian -> shperical -> Cartesian. This however does
+% not catch if the functions are implemented correctly.
+% This means it will test that our conversions are accurate
+% but not if we made a fatal mistake.
+
+%% Problems encountered
+% TODO honest account, or NONE.
+%
+% Similar to Lab01, getting setup was really the main issue here.
+% It took a while before I was at the point where I was ready to
+% work on the labs (and understand what I'm doing,) but once I
+% understood the task better, completing it was quick.
+%
+% Big thanks to Carissa and Amelia for helping me get caught up
+% for general information around the file structure and navigating
+% the resources!
+
+%% Full test suite
+runTests
+##### SOURCE END #####
+-->
+</body>
+</html>

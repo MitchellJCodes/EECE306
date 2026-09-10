@@ -1,6 +1,6 @@
 function eta = eta0()
 %ETA0 Intrinsic Impedance Of Free Space eta (eta0)
-% eta = em.const.eta0() returns the scalar value of the impedance of free
+%   ETA = EM.CONST.ETA0() returns the scalar value of the impedance of free
 % space.
 %
 % Example:

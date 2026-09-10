@@ -1,6 +1,6 @@
 function m0 = mu0()
 %MU0 Magnetic Constant m0 (Permeability of Free Space)
-% m0 = em.const.mu0() returns the scalar value of the magnetic constant.
+%   M0 = EM.CONST.MU0() returns the scalar value of the magnetic constant.
 %
 % Example:
 % em.const.mu0() % returns 1.2566e-06
