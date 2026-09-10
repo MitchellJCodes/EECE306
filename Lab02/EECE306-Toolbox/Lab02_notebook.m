@@ -1,6 +1,6 @@
 %% EECE 306 Lab 2 notebook. Coordinate Systems, Points and Vector Components
-% *Team 03 Mitchell Nazareth.* TODO replace with your team number and member names.
-%
+% *Team 03 Carissa McWilliams, Amelia Harris, and Mitch Nazareth.* TODO replace with your team number and member names.
+% 
 % Fill in every TODO, run |publish('Lab02_notebook.m')| from the toolbox
 % root, print the HTML to PDF, three to five pages.
 
