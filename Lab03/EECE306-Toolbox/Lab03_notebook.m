@@ -1,5 +1,5 @@
 %% EECE 306 Lab 3 notebook. Point Charges, Superposition, and the Field Engine
-% *Team 3 Carissa McWilliams, Amelia Harris, and Mitch Nazareth* TODO replace with your team number and member names.
+% *Team 03 Carissa McWilliams, Amelia Harris, and Mitch Nazareth* TODO replace with your team number and member names.
 %
 % Fill in every TODO, run |publish('Lab03_notebook.m')| from the toolbox
 % root, print the HTML to PDF, three to five pages.
