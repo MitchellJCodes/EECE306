@@ -1,5 +1,5 @@
 %% EECE 306 Lab 1 notebook. Building the Toolbox, Constants and Vector Algebra
-% *Team 3 Mitch Nazareth.* TODO replace with your team number and member names.
+% *Team 03 Carissa McWilliams, Amelia Harris, and Mitch Nazareth.* TODO replace with your team number and member names.
 %
 % Fill in every item marked TODO, then run |publish('Lab01_notebook.m')|
 % from the toolbox root and print the resulting HTML to PDF. Three to five
@@ -67,8 +67,7 @@ fprintf('fromTo input 100x3 output %s\n', mat2str(size(em.vec.fromTo(A,B))));
 % us all seperate branches, and we can push our work to main
 % when it is deemed good enough to work. I think having our
 % work on github will really bring us a long way this semester.
-%
-% - Mitch
+
 
 %% Full test suite
 runTests
