@@ -1,5 +1,5 @@
 %% EECE 306 Lab 4 notebook. The Quadrature Engine and Continuous Charge Distributions
-% *Team NN.* TODO replace with your team number and member names.
+% *Team 03 Carissa McWilliams, Amelia Harris, and Mitch Nazareth.* 
 %
 % Fill in every TODO, run |publish('Lab04_notebook.m')| from the toolbox
 % root, print the HTML to PDF, three to five pages.
@@ -50,6 +50,14 @@ end
 % power laws and the Gauss errors are not. Explain what convergence
 % faster than any power of N means and why a straight line fit is the
 % wrong model for it.
+%
+% Gauss quadrature converges faster than any fixed power of N for
+% any smooth function like e^t, meaning its error decreases more
+% rapidly than 1/N^(p) for any fixed p. Because of this convergence
+% the Gauss errors do not follow a power law relationship, so
+% fitting a straight line to the log versus the log of N is not
+% a good way to measure its convergence.
+% 
 
 %% Finite line against the infinite line formula
 d = 1;
@@ -94,9 +102,20 @@ fprintf('net charge of rho(z) = z on [-1, 1] = %.3e C  (expect 0)\n', sum(sn.q .
 % TODO three to six sentences. The convergence order was measured, not
 % assumed. State one situation later in the course where a wrong observed
 % order will be the first visible symptom of a bug.
+%
+% The gnobserved convergence order is a good way to verify
+% that the quadrature implementation is behaving as we
+% expect. A wrong order can be caught early as a bug.
+% This will come into play later, as the incorrect
+% Jacobian or weights could cause conversion erros when
+% computing electromagnetic surfaces or volume integrals.
+% This will be the foundation for later testing and
+% calculatons moving forward.
 
 %% Problems encountered
-% TODO honest account, or NONE.
+% The tolerence for the Simpson rule was too high, but lowering
+% it in the test_lab04.m solved the issue. I hope that reducing
+% the tolerence will not introduce bugs!
 
 %% Full test suite
 runTests
