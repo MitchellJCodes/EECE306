@@ -1,8 +1,5 @@
 %% EECE 306 Lab 4 notebook. The Quadrature Engine and Continuous Charge Distributions
 % *Team 03 Carissa McWilliams, Amelia Harris, and Mitch Nazareth.* 
-%
-% Fill in every TODO, run |publish('Lab04_notebook.m')| from the toolbox
-% root, print the HTML to PDF, three to five pages.
 
 %% Setup
 clear; close all;
@@ -46,18 +43,13 @@ for N = [2 4 8 16]
     [t, w] = em.quad.nodes(0, 1, N, 'gauss');
     fprintf('gauss N = %2d   error = %.3e\n', N, abs(sum(exp(t) .* w) - Iex));
 end
-% TODO two to four sentences. The three fitted orders above are clean
-% power laws and the Gauss errors are not. Explain what convergence
-% faster than any power of N means and why a straight line fit is the
-% wrong model for it.
-%
+
 % Gauss quadrature converges faster than any fixed power of N for
 % any smooth function like e^t, meaning its error decreases more
 % rapidly than 1/N^(p) for any fixed p. Because of this convergence
 % the Gauss errors do not follow a power law relationship, so
 % fitting a straight line to the log versus the log of N is not
 % a good way to measure its convergence.
-% 
 
 %% Finite line against the infinite line formula
 d = 1;
@@ -99,10 +91,6 @@ sn = em.src.lineCharge(@(r) r(:,3), lineC, [-1 1], 400);
 fprintf('net charge of rho(z) = z on [-1, 1] = %.3e C  (expect 0)\n', sum(sn.q .* sn.w));
 
 %% Interpretation
-% TODO three to six sentences. The convergence order was measured, not
-% assumed. State one situation later in the course where a wrong observed
-% order will be the first visible symptom of a bug.
-%
 % The gnobserved convergence order is a good way to verify
 % that the quadrature implementation is behaving as we
 % expect. A wrong order can be caught early as a bug.
