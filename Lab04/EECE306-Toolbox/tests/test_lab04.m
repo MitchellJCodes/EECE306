@@ -1,7 +1,8 @@
+function test_04 = test_lab04()
 % test_lab04.m  Lab 4 checks. Add to this file, do not delete existing checks.
 % Run from the toolbox root with:  runTests
 
-%% 1-D nodes and weights
+% 1-D nodes and weights
 
 N = 16;
 [t,w] = em.quad.nodes(0,1,N);
@@ -22,7 +23,7 @@ em.test.assertClose(w,w2,1e-12, ...
     'default quadrature weights are midpoint');
 
 
-%% 2. Weight sums for all rules
+% 2. Weight sums for all rules
 
 rules = {'midpoint','trapz','simpson','gauss'};
 
@@ -34,7 +35,7 @@ for k = 1:numel(rules)
 end
 
 
-%% 3. Midpoint rule
+% 3. Midpoint rule
 
 [tm,wm] = em.quad.nodes(0,1,32,'midpoint');
 
@@ -45,7 +46,7 @@ assert(abs(Im-Iref) < 1e-3, ...
     'midpoint exponential integral is inaccurate');
 
 
-%% 4. Trapezoidal rule
+% 4. Trapezoidal rule
 
 [tt,wt] = em.quad.nodes(0,1,32,'trapz');
 
@@ -55,7 +56,7 @@ assert(abs(It-Iref) < 3e-4, ...
     'trapz exponential integral is inaccurate');
 
 
-%% 5. Simpson rule
+% 5. Simpson rule
 
 [ts,ws] = em.quad.nodes(0,1,16,'simpson');
 
@@ -65,7 +66,7 @@ assert(abs(Is-Iref) < 1e-8, ...
     'Simpson exponential integral is inaccurate');
 
 
-%% 6. Gauss rule
+% 6. Gauss rule
 
 [tg,wg] = em.quad.nodes(0,1,8,'gauss');
 
@@ -75,7 +76,7 @@ assert(abs(Ig-Iref) < 1e-12, ...
     'Gauss exponential integral is inaccurate');
 
 
-%% 7. Gauss polynomial exactness
+% 7. Gauss polynomial exactness
 
 [tg,wg] = em.quad.nodes(-1,1,6,'gauss');
 
@@ -93,7 +94,7 @@ for p = 0:11
 end
 
 
-%% 8. Line quadrature: straight line
+% 8. Line quadrature: straight line
 
 lineC = @(t)[t zeros(size(t)) zeros(size(t))];
 
@@ -108,7 +109,7 @@ em.test.assertClose(sum(wline),3,1e-10, ...
     'straight line length');
 
 
-%% 9. Line quadrature: unit circle
+% 9. Line quadrature: unit circle
 
 circ = @(t)[cos(t) sin(t) zeros(size(t))];
 
@@ -118,7 +119,7 @@ em.test.assertClose(sum(wcirc),2*pi,1e-5, ...
     'unit circle circumference');
 
 
-%% 10. Line Jacobian: nonuniform parameterization
+% 10. Line Jacobian: nonuniform parameterization
 
 curve = @(t)[t.^2 zeros(size(t)) zeros(size(t))];
 
@@ -128,7 +129,7 @@ em.test.assertClose(sum(wcurve),1,1e-5, ...
     'line quadrature includes |dr/dt|');
 
 
-%% 11. Surface quadrature: unit square
+% 11. Surface quadrature: unit square
 
 sq = @(u,v)[u v 0];
 
@@ -143,7 +144,7 @@ em.test.assertClose(sum(wsq),1,1e-10, ...
     'unit square area');
 
 
-%% 12. Surface quadrature: unit sphere
+% 12. Surface quadrature: unit sphere
 
 sph = @(th,ph) ...
     [sin(th)*cos(ph) ...
@@ -157,7 +158,7 @@ em.test.assertClose(sum(wsph),4*pi,3e-3, ...
     'unit sphere surface area');
 
 
-%% 13. Surface Jacobian must be positive
+% 13. Surface Jacobian must be positive
 
 [pos,wsq2] = em.quad.surf( ...
     sq,[1 0],[0 1],20,20);
@@ -166,7 +167,7 @@ em.test.assertClose(sum(wsq2),1,1e-10, ...
     'surface uses absolute Jacobian');
 
 
-%% 14. Volume quadrature: unit cube
+% 14. Volume quadrature: unit cube
 
 cube = @(u,v,q)[u v q];
 
@@ -182,7 +183,7 @@ em.test.assertClose(sum(wcube),1,1e-10, ...
     'unit cube volume');
 
 
-%% 15. Volume Jacobian
+% 15. Volume Jacobian
 
 box = @(u,v,q)[2*u 3*v 4*q];
 
@@ -193,7 +194,7 @@ em.test.assertClose(sum(wbox),24,1e-10, ...
     'volume includes absolute Jacobian determinant');
 
 
-%% 16. Volume quadrature: unit ball
+% 16. Volume quadrature: unit ball
 
 ball = @(u,v,q) ...
     [q*sin(u)*cos(v) ...
@@ -207,7 +208,7 @@ em.test.assertClose(sum(wball),4*pi/3,6e-3, ...
     'unit ball volume');
 
 
-%% 17. Observed convergence order
+% 17. Observed convergence order
 
 Ns = [8 16 32 64 128]';
 
@@ -240,6 +241,6 @@ for k = 1:3
 end
 
 
-%% Finished
+% Finished
 
 disp('  test_lab04 checks complete');
