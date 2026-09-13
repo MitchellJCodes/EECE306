@@ -45,74 +45,41 @@ function [t,w] = nodes(a,b,N,rule)
             end
 
         % Simpson rule
+        % N is the number of subintervals.
+        % N must be even.
         %
-        % For odd N:
-        % standard composite Simpson 1/3.
-        %
-        % For even N:
-        % Simpson 1/3 on the first N-3 point
-        % Simpson 3/8 on the final 4 points
-        % This preserves fourth-order convergence
+        % The rule uses N+1 equally spaced nodes.
         case 'simpson'
 
             if N == 1
-                t = (a+b)/2;
-                w = b-a;
-
-            elseif N == 2
-
-                % With only two points, Simpson is not possible
+                
+                % With one subinterval, Simpson is not possible
                 % Fall back to trapezoidal rule
-                t = linspace(a,b,N)';
+                t = linspace(a,b,2)';
                 h = b-a;
 
                 w = [h/2; h/2];
 
+            elseif mod(N,2) ~= 0
+
+                error('Simpson rule requires N to be even');
+
             else
 
-                t = linspace(a,b,N)';
-                h = (b-a)/(N-1);
+                h = (b-a)/N;
 
-                w = zeros(N,1);
+                t = linspace(a,b,N+1)';
 
-                if mod(N,2) == 1
+                % Start with the endpoint weights
+                w = ones(N+1,1);
 
-                    % Odd number of points -> even number of intervals
-                    % Standard Simpson 1/3
-                    w(1) = 1;
-                    w(N) = 1;
+                % Interior even-indexed nodes get weight 2
+                w(3:2:N-1) = 2;
 
-                    w(2:2:N-1) = 4;
-                    w(3:2:N-2) = 2;
+                % Interior odd-indexed nodes get weight 4
+                w(2:2:N) = 4;
 
-                    w = (h/3)*w;
-
-                else
-
-                    % Even number of points -> odd number of intervals
-                    %
-                    % Simpson 1/3 over the first N-3 points
-                    % Simpson 3/8 over the last 4 points
-
-                    m = N-3;
-
-                    % First section: points 1:m
-                    w(1) = w(1) + 1;
-                    w(m) = w(m) + 1;
-
-                    if m >= 3
-                        w(2:2:m-1) = w(2:2:m-1) + 4;
-                        w(3:2:m-2) = w(3:2:m-2) + 2;
-                    end
-
-                    w = (h/3)*w;
-
-                    % Last three intervals: points m:N
-                    %
-                    % 3/8 weights = [1 3 3 1] * 3h/8
-                    w(m:N) = w(m:N) + ...
-                             (3*h/8)*[1; 3; 3; 1];
-                end
+                w = (h/3)*w;
             end
 
         % Gauss-Legendre rule
