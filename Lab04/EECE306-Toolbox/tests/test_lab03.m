@@ -1,5 +1,5 @@
 function test_03 = test_lab03()
-%TEST_LAB03 Runs required tests for lab 2
+%TEST_LAB03 Runs required tests for lab 3
 %  Compares the calculated filed of a point charge
 %  with the closed form solution, and checks
 %  symmetry and dipole behavior. Finnally
