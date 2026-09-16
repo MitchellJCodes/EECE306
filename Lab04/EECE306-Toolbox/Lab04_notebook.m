@@ -104,6 +104,9 @@ fprintf('net charge of rho(z) = z on [-1, 1] = %.3e C  (expect 0)\n', sum(sn.q .
 % The tolerence for the Simpson rule was too high, but lowering
 % it in the test_lab04.m solved the issue. I hope that reducing
 % the tolerence will not introduce bugs!
+%
+% I also went back and fixed the older test_lab02.m and test_lab03.m
+% to work with the use assertions as given in the feedback for lab 2.
 
 %% Full test suite
 runTests
