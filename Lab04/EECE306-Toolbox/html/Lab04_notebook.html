@@ -276,6 +276,9 @@ calculatons moving forward.</p>
 <p>The tolerence for the Simpson rule was too high, but lowering
 it in the test_lab04.m solved the issue. I hope that reducing
 the tolerence will not introduce bugs!</p>
+
+<p>I also went back and fixed the older test_lab02.m and test_lab03.m
+to work with the use assertions as given in the feedback for lab 2.</p>
 <h2><a id="node10">Full test suite</a></h2>
 <pre class="oct-code">runTests</pre>
 
@@ -317,7 +320,7 @@ at (0, 5, 0), (Ar, Atheta, Aphi) =
    3.0000e+00   1.8370e-16  -2.0000e+00
 at (4, 0, 0), (Ar, Atheta, Aphi) =
    2.0000e+00   1.2246e-16   3.0000e+00
-  PASS  test_lab02            0.03 s
+  PASS  test_lab02            0.04 s
    r (m)    relative error
     1.0000         0
     2.0000         0
@@ -332,10 +335,10 @@ at (4, 0, 0), (Ar, Atheta, Aphi) =
 max |Ex| on bisector      = 0.000e+00 V/m
 max |E| on the same plane = 6.298e+02 V/m
 |E(r)| / |E(2r)| = 8.0003   (expect near 8 for a dipole)
-em.field.E on 5000 points took 0.005 s  (requirement, under 2 s)
-  PASS  test_lab03            1.70 s
+em.field.E on 5000 points took 0.002 s  (requirement, under 2 s)
+  PASS  test_lab03            1.68 s
   test_lab04 checks complete
-  PASS  test_lab04            0.28 s
+  PASS  test_lab04            0.26 s
 --------------------------------------------------------------
   4 passed, 0 failed, 4 total
   All tests passing.
@@ -454,6 +457,9 @@ fprintf('net charge of rho(z) = z on [-1, 1] = %.3e C  (expect 0)\n', sum(sn.q .
 % The tolerence for the Simpson rule was too high, but lowering
 % it in the test_lab04.m solved the issue. I hope that reducing
 % the tolerence will not introduce bugs!
+%
+% I also went back and fixed the older test_lab02.m and test_lab03.m
+% to work with the use assertions as given in the feedback for lab 2.
 
 %% Full test suite
 runTests
