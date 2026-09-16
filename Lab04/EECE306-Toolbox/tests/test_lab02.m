@@ -6,7 +6,6 @@ function test_02 = test_lab02()
 %   Checks spherical pole values and cylinder
 %   angles in all 4 quadrants. Converts vector
 %   components and checks for correct magnitudes.
-%   Re-written to work with assertions.
 clear; close all;
 rng(306);
 
