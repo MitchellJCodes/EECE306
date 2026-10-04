@@ -1,4 +1,4 @@
-function [pos,w] = vol(volume,uinterval,vinterval,qinterval,Nu,Nv,Nq)
+function [pos,w] = vol(volume,uinterval,vinterval,qinterval,Nu,Nv,Nq,rule)
 % em.quad.vol
 % Quadrature over a parametrized volume
 %
@@ -6,11 +6,16 @@ function [pos,w] = vol(volume,uinterval,vinterval,qinterval,Nu,Nv,Nq)
 % uinterval - [u0 u1]
 % vinterval - [v0 v1]
 % qinterval - [q0 q1]
-% Nu,Nv,Nq - number of quadrature points
+% Nu, Nv, Nq - number of quadrature points
+% rule - quadrature rule
 %
 % Returns:
 % pos - Nu*Nv*Nq by 3
 % w - Nu*Nv*Nq by 1
+
+    if nargin < 8 || isempty(rule)
+        rule = 'midpoint';
+    end
 
     ua = uinterval(1);
     ub = uinterval(2);
@@ -21,10 +26,10 @@ function [pos,w] = vol(volume,uinterval,vinterval,qinterval,Nu,Nv,Nq)
     qa = qinterval(1);
     qb = qinterval(2);
 
-    % Midpoint quadrature in each parameter
-    [u,wu] = em.quad.nodes(ua,ub,Nu,'midpoint');
-    [v,wv] = em.quad.nodes(va,vb,Nv,'midpoint');
-    [q,wq] = em.quad.nodes(qa,qb,Nq,'midpoint');
+    % Quadrature nodes and weights in each parameter
+    [u,wu] = em.quad.nodes(ua,ub,Nu,rule);
+    [v,wv] = em.quad.nodes(va,vb,Nv,rule);
+    [q,wq] = em.quad.nodes(qa,qb,Nq,rule);
 
     % Tensor-product grid
     [U,V,Q] = ndgrid(u,v,q);
@@ -42,7 +47,7 @@ function [pos,w] = vol(volume,uinterval,vinterval,qinterval,Nu,Nv,Nq)
     pos = volume(U,V,Q);
     pos = reshape(pos,[],3);
 
-    % Numerical derivatives.
+    % Numerical derivatives
     hu = eps^(1/5) .* (1 + abs(U));
     hv = eps^(1/5) .* (1 + abs(V));
     hq = eps^(1/5) .* (1 + abs(Q));
@@ -83,7 +88,7 @@ function [pos,w] = vol(volume,uinterval,vinterval,qinterval,Nu,Nv,Nq)
     ru = (r_um2 - 8*r_um1 + 8*r_up1 - r_up2) ./ (12*hu);
     rv = (r_vm2 - 8*r_vm1 + 8*r_vp1 - r_vp2) ./ (12*hv);
     rq = (r_qm2 - 8*r_qm1 + 8*r_qp1 - r_qp2) ./ (12*hq);
-    
+
     % Volume Jacobian
     % J = det([ru rv rq])
     %
