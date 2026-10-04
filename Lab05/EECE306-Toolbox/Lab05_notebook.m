@@ -1,8 +1,5 @@
 %% EECE 306 Lab 5 notebook. Flux, Gauss's Law, and the Divergence
 % *Team 03 Carissa McWilliams, Amelia Harris, and Mitch Nazareth.* 
-%
-% Fill in every TODO, run |publish('Lab05_notebook.m')| from the toolbox
-% root, print the HTML to PDF, three to five pages.
 
 %% Setup
 clear; close all;
