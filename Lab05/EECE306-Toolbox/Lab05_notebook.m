@@ -21,12 +21,12 @@ fprintf('relative error        = %.3e\n', abs(Phi - Q)/Q);
 sout = em.src.pointCharge(Q, [5 0 0]);
 Phi0 = em.field.flux(@(r) em.field.D(sout, r), sphR, [0 pi], [0 2*pi], 60, 120);
 fprintf('flux with charge outside = %.3e C  (consistent with zero)\n', Phi0);
-%
+
 % I initially ran the assert with a tolerance of 1e-4,
-% and found that I was getting a margion of error
+% and found that I was getting a relative error of
 % about 1.14e-4, so I raised the tolerance to 2e-4,
 % as that is high enough to pass test, but still
-% very accurate, more than enough for future tests.
+% very accurate, more than enough for this test.
 
 %% Three surfaces, one answer
 % The same charge, placed off center inside all three closed surfaces.
@@ -47,9 +47,11 @@ PhiHemi = em.field.flux(FD3, hemi, [0 pi/2], [0 2*pi], 60, 120) ...
 fprintf('sphere              %.6e C\n', PhiSph);
 fprintf('cube                %.6e C\n', cube);
 fprintf('hemisphere and cap  %.6e C\n', PhiHemi);
-% TODO which surface was hardest to set up correctly and why. Face
-% orientation is the usual culprit, state how each outward normal was
-% checked.
+
+% The cube was the hardest surface because it has six faces.
+% Setting up the correct orientation of each face required
+% comparing the direction of the parameter cross product
+% with the outward normal direction.
 
 %% Independence of the charge position inside
 for x0 = [0 0.15 0.3]
@@ -73,8 +75,12 @@ for Nu = [10 20 40]
 end
 dfree = em.op.div(FD, [2 1 1], hdiv);
 fprintf('div D in charge free space = %.3e  (consistent with zero)\n', dfree);
-% TODO one or two sentences. Why must h span many source elements here,
-% and what would div D return with h far smaller than the element spacing.
+
+% h spans across so many source elements here so the finite difference
+% calculation can see the overall continuous charge distribution. If
+% h is much smaller than the element spacing the calculated divergence
+% will be inaccurate because it will be affected by the individual
+% source elements.
 
 %% Orientation is a convention you must own
 sphFlip = @(ph,th) 0.5*[sin(th)*cos(ph) sin(th)*sin(ph) cos(th)];
@@ -82,12 +88,15 @@ PhiFlip = em.field.flux(FD, sphFlip, [0 2*pi], [0 pi], 120, 60);
 fprintf('flux with swapped parameter order = %.6e C  (sign flipped)\n', PhiFlip);
 
 %% Interpretation
-% TODO three to six sentences. Gauss's law was verified without knowing
-% any closed form for the flux integral. Explain why this class of test
-% remains available on a problem with no known answer.
+% Gauss's law gives us a relationship between total flux and the charge
+% enclosed by the surface. We can calculate the flux without knowing
+% the exact analytical value of the integral. We then compare the result
+% to the known enclosed charge. This lets us test if the implementation
+% is working correctly even if the integral does not have a known closed
+% form solution.
 
 %% Problems encountered
-% TODO honest account, or NONE.
+% We had to fix a bug in +em+/+quad/vol.m where the function did not accept the quadrature rule argument. Also, the Jacobian wasn't being calculated correctly so that the weights represented the physical volume.
 
 %% Full test suite
 runTests
