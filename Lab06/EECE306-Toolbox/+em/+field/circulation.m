@@ -14,11 +14,11 @@ function C = circulation(F, curve, interval, N)
 %
 %       C = integral_C F . dr
 %
-%   evaluated using midpoint quadrature and a numerical derivative
+%   evaluated using gauss quadrature and a numerical derivative
 %   of the parametrized curve.
 
 % Parameter-space quadrature
-[t,wt] = em.quad.nodes(interval(1),interval(2),N,'midpoint');
+[t,wt] = em.quad.nodes(interval(1),interval(2),N,'gauss');
 
 % Curve positions
 r = curve(t);
