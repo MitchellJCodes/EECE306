@@ -30,7 +30,10 @@ errmap = reshape(em.vec.mag(Ed - Eg) ./ em.vec.mag(Ed), size(X));
 figure; contourf(X, Y, log10(errmap), 20); colorbar
 xlabel('x (m)'); ylabel('y (m)')
 title('log10 relative error of E recovered from  -grad V')
-% TODO one or two sentences on where the error is largest and why.
+% Error is largest near the edge of the region where the gradient
+% is calculated because the gradient is approximated using finite
+% difference. This creates relative error that gets bigger when
+% the electric field is smaller.
 
 %% Choosing the step size, the V shaped curve
 % Truncation error falls as h squared, round off grows as 1 over h. The
@@ -80,11 +83,17 @@ em.viz.streamlines(FE, [-2 2], [-2 2], [cosd(0:45:315)' sind(0:45:315)' zeros(8,
 title('Equipotentials with field lines overlaid')
 
 %% Interpretation
-% TODO three to six sentences. State what the step size study implies for
-% every later use of em.op.grad, and why driving h smaller is not safer.
+% The step size study implies that there is a size of h
+% small enough to receive high accuracy without
+% driving error higher due to round-off error.
+% This error is caused by a loss in numerical precision
+% when calculating the difference between two very close
+% potential values. Driving h to be smaller is not always
+% safer because eventually the two numerical values become
+% close enough that the difference between them loses precision.
 
 %% Problems encountered
-% TODO honest account, or NONE.
+% At first, I used midpoint quadrature and numerical derivative, but quickly found that my relative error was larger than my expected relative error. Switching to guass's equations resolved the issue.
 
 %% Full test suite
 runTests
