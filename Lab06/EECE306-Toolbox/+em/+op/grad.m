@@ -4,17 +4,17 @@ function g = grad(f, r0, h)
 %   g = em.op.grad(f,r0,h)
 %
 %   f   - scalar field function handle
-%   r0  - 1-by-3 observation point
+%   r0  - 1-by-3 or N-by-3 observation point(s)
 %   h   - finite-difference step size
 %
-%   g   - 1-by-3 gradient of f at r0
+%   g   - 1-by-3 or N-by-3 gradient of f at r0
 
 if nargin < 3 || isempty(h)
     h = 1e-5;
 end
 
-if ~isequal(size(r0), [1 3])
-    error('r0 must be a 1x3 position');
+if size(r0,2) ~= 3
+    error('r0 must be an N-by-3 position array');
 end
 
 if ~isscalar(h) || h <= 0
