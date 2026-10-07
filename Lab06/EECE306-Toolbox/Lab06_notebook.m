@@ -1,5 +1,5 @@
 %% EECE 306 Lab 6 notebook. Electric Potential, the Gradient, and Path Independence
-% *Team NN.* TODO replace with your team number and member names.
+% *Team 03 Carissa McWilliams, Amelia Harris, and Mitch Nazareth.* 
 %
 % Fill in every TODO, run |publish('Lab06_notebook.m')| from the toolbox
 % root, print the HTML to PDF, three to five pages.
