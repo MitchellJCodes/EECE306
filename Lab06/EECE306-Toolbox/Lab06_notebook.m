@@ -1,8 +1,5 @@
 %% EECE 306 Lab 6 notebook. Electric Potential, the Gradient, and Path Independence
 % *Team 03 Carissa McWilliams, Amelia Harris, and Mitch Nazareth.* 
-%
-% Fill in every TODO, run |publish('Lab06_notebook.m')| from the toolbox
-% root, print the HTML to PDF, three to five pages.
 
 %% Setup
 clear; close all;
@@ -94,6 +91,10 @@ title('Equipotentials with field lines overlaid')
 
 %% Problems encountered
 % At first, I used midpoint quadrature and numerical derivative, but quickly found that my relative error was larger than my expected relative error. Switching to guass's equations resolved the issue.
+%
+% I also messed up a with grad.m at first, as I didnt properly support N x 3 inputs, which failed my tests for a bit.
+%
+% Also on a personal note, I ran into issues with my dependencies getting out of date and I also needed ImageMagick to be able to build the necessary graphics to publish. I updated my flake.nix to include the imagemagick package, and ran a nix flake update. I didn't expect to have to update my build environment, and it stumped me for a couple hours why it was giving me opengl errors and imagemagick errors. Sorry for the rant but this was definitely a struggle point for me haha.
 
 %% Full test suite
 runTests

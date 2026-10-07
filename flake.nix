@@ -17,6 +17,7 @@
         packages = with pkgs; [
           octaveFull
           ghostscript
+          graphicsmagick
           qt6.qtbase
         ];
       };
