@@ -105,6 +105,7 @@ VB = em.solve.poisson2d(G,rhoBlock,1,mask,zeros(size(G.X)), ...
 Vh = @(r) interp2(G.X,G.Y,VB,r(:,1),r(:,2),'linear');
 Eh = @(r) -em.op.grad(Vh,r,G.hx/2);
 Dh = @(r) em.const.eps0()*Eh(r);
+
 % Four oriented vertical faces form the side of a unit-height rectangular
 % Gaussian box. The top/bottom flux is zero because this 2-D solution has
 % no z dependence and Ez=0.
@@ -127,4 +128,3 @@ fprintf('  Lab 7 MMS error %.3e; observed order %.3f; Gauss-law relative error %
     err,p,relFluxErr);
 disp('  test_lab07 checks complete');
 end
-
