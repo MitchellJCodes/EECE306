@@ -5,22 +5,25 @@ A Octave toolbox for EECE 306, Fundamentals of Electromagnetics Lab.
 ## Repository structure
 
 EECE306-Toolbox/
-├── +em/                # Main MATLAB package
-│   ├── +const/         # Physical constants
-│   ├── +coord/         # Coordinate-system conversions
-│   ├── +derive/        # Reserved for derived expressions
-│   ├── +field/         # Electromagnetic field calculations
-│   ├── +op/            # Gradient, divergence, and Laplacian
-│   ├── +quad/          # Numerical quadrature and Jacobians
-│   ├── +solve/         # Numerical PDE solvers
-│   ├── +src/           # Charge/current source constructors
-│   ├── +test/          # Numerical verification utilities
-│   ├── +vec/           # Vector utilities
-│   └── +viz/           # Field and potential visualization
-├── tests/              # Lab-specific regression tests
-├── Lab07_notebook.m    # Lab 7 examples and analysis
-├── runTests.m          # Regression test runner
-└── README.md           # Project documentation
+|
++-- +em/                       # Main MATLAB package
+|   |
+|   +-- +const/                # Physical constants
+|   +-- +coord/                # Coordinate-system conversions
+|   +-- +derive/               # Reserved for derived expressions
+|   +-- +field/                # Electromagnetic field calculations
+|   +-- +op/                   # Gradient, divergence, and Laplacian
+|   +-- +quad/                 # Numerical quadrature and Jacobians
+|   +-- +solve/                # Numerical PDE solvers
+|   +-- +src/                  # Charge/current source constructors
+|   +-- +test/                 # Numerical verification utilities
+|   +-- +vec/                  # Vector utilities
+|   `-- +viz/                  # Field and potential visualization
+|
++-- tests/                     # Lab-specific regression tests
++-- Lab07_notebook.m           # Lab 7 notebook and analysis
++-- runTests.m                 # Regression test runner
+`-- README.md                  # Project documentation
 
 ## Running tests
 
