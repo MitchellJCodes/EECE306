@@ -4,26 +4,18 @@ A Octave toolbox for EECE 306, Fundamentals of Electromagnetics Lab.
 
 ## Repository structure
 
-EECE306-Toolbox/
-|
-+-- +em/                       # Main MATLAB package
-|   |
-|   +-- +const/                # Physical constants
-|   +-- +coord/                # Coordinate-system conversions
-|   +-- +derive/               # Reserved for derived expressions
-|   +-- +field/                # Electromagnetic field calculations
-|   +-- +op/                   # Gradient, divergence, and Laplacian
-|   +-- +quad/                 # Numerical quadrature and Jacobians
-|   +-- +solve/                # Numerical PDE solvers
-|   +-- +src/                  # Charge/current source constructors
-|   +-- +test/                 # Numerical verification utilities
-|   +-- +vec/                  # Vector utilities
-|   `-- +viz/                  # Field and potential visualization
-|
-+-- tests/                     # Lab-specific regression tests
-+-- Lab07_notebook.m           # Lab 7 notebook and analysis
-+-- runTests.m                 # Regression test runner
-`-- README.md                  # Project documentation
+- `+em/+const/` — physical constants (`eps0`, `mu0`, `c0`, `eta0`).
+- `+em/+vec/` — vector magnitude, unit vectors, angles, and displacements.
+- `+em/+coord/` — Cartesian, cylindrical, and spherical coordinate and vector-component conversions.
+- `+em/+quad/` — one-, two-, and three-parameter numerical quadrature with geometric Jacobians.
+- `+em/+src/` — discretized charge/current source constructors and source merging.
+- `+em/+field/` — electric field, potential, electric flux density, flux, and circulation.
+- `+em/+op/` — numerical gradient, divergence, curl, and Laplacian operators as implemented.
+- `+em/+solve/` — reserved for boundary-value solvers specified by the course API.
+- `+em/+viz/` — vector-field and scalar-potential plotting helpers.
+- `+em/+test/` — assertion and numerical-convergence verification helpers.
+- `tests/` — lab-specific regression checks (`test_lab01.m` through the latest included lab test).
+- `runTests.m` — provided test runner; run it from the toolbox root.
 
 ## Running tests
 
