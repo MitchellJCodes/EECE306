@@ -35,6 +35,10 @@ E = em.field.E(s,r);
 em.test.assertClose(D,e0*E,tol, ...
     'D equals eps0 times E');
 
+Ddielectric = em.field.D(s,r,2.5);
+em.test.assertClose(Ddielectric,2.5*D,tol, ...
+    'D scales with relative permittivity');
+
 %% 3. Superposition of two charges
 
 s1 = em.src.pointCharge(1e-9,[-0.1 0 0]);
@@ -83,6 +87,15 @@ PhiFlip = em.field.flux( ...
 
 em.test.assertClose(PhiFlip,-1,1e-10, ...
     'Reversing surface orientation flips flux');
+
+% A third distinct surface: a tilted parallelogram r(u,v)=[u,v,u+v].
+% Its oriented area vector is [-1,-1,1], so F=[1,0,0] gives flux -1.
+tilted = @(u,v) [u v u+v];
+PhiTilted = em.field.flux( ...
+    @(r) repmat([1 0 0],size(r,1),1), ...
+    tilted,[0 1],[0 1],20,20);
+em.test.assertClose(PhiTilted,-1,1e-8, ...
+    'Flux through a tilted planar surface');
 
 %% 7. Gauss law for a point charge
 

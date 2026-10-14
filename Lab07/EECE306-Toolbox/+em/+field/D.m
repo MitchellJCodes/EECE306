@@ -1,7 +1,8 @@
-function D_r = D(s, r)
+function D_r = D(s, r, epsr)
 % D  Electric flux density due to a charge source.
 %
-%   D_r = em.field.D(s,r)
+%   D_r = em.field.D(s,r,epsr)
+%   epsr - relative permittivity (optional, defaults to 1)
 %
 %   s - discretized charge source with fields:
 %       s.pos : source element positions
@@ -12,7 +13,17 @@ function D_r = D(s, r)
 %
 %   D_r - N-by-3 electric flux density values
 
+if nargin < 3 || isempty(epsr)
+    epsr = 1;
+end
+if ~isscalar(epsr) || ~isfinite(epsr) || epsr <= 0
+    error('epsr must be a positive finite scalar');
+end
+
 N = size(r,1);
+if size(r,2) ~= 3
+    error('r must be an N-by-3 array');
+end
 
 r_i = s.pos;
 
@@ -29,7 +40,7 @@ end
 
 qw = reshape(s.q .* s.w, 1, [], 1);
 
-D_each = (1/(4*pi)) .* qw .* R ./ (Rmag.^3);
+D_each = (epsr/(4*pi)) .* qw .* R ./ (Rmag.^3);
 
 D_sum = sum(D_each, 2);
 

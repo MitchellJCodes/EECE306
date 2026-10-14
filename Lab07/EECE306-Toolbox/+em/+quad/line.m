@@ -1,20 +1,25 @@
-function [pos,w] = line(curve,interval,N)
+function [pos,w] = line(curve,interval,N,rule)
 % em.quad.line
 % Quadrature of a parametrized curve
 %
 % curve - function handle r(t) returning N-by-3 positions
 % interval - [a b]
 % N - number of quadrature points
+% rule - quadrature rule (optional; defaults to midpoint)
 %
 % Returns:
 % pos - N-by-3 positions
 % w - N-by-1 physical line-length weights
 
+    if nargin < 4 || isempty(rule)
+        rule = 'midpoint';
+    end
+
     a = interval(1);
     b = interval(2);
 
     % Use midpoint quadrature for the parameter
-    [t,wt] = em.quad.nodes(a,b,N,'midpoint');
+    [t,wt] = em.quad.nodes(a,b,N,rule);
 
     % Evaluate curve
     pos = curve(t);

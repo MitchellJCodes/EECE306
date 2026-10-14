@@ -113,7 +113,7 @@ em.test.assertClose(C,0,1e-10, ...
 loops = { ...
     @(t)[2*cos(t) 2*sin(t) zeros(size(t))], ...
     @(t)[1+0.5*cos(t) 0.5*sin(3*t) 0.3*sin(t)], ...
-    @(t)[0.5*cos(t) 1+0.8*sin(t) 0.2*cos(2*t)]};
+    @(t)[0.5*cos(t) 1.5+0.8*sin(t) 0.2*cos(2*t)]};
 
 for k = 1:3
     C = em.field.circulation( ...
@@ -121,7 +121,27 @@ for k = 1:3
         loops{k},[0 2*pi],400);
 
     em.test.assertClose(C,0,1e-8, ...
-        'Circulation of electrostatic field');
+        'Circulation of point-charge field');
+end
+
+% Required nine combinations: three closed paths for each of three source
+% geometries (point charges, finite line charge, and volume charge).
+lineCurve = @(t) [t zeros(size(t)) zeros(size(t))];
+sLine = em.src.lineCharge(1e-9,lineCurve,[-0.25 0.25],80,'gauss');
+unitCube = @(u,v,w) [0.5*u-0.25, 0.5*v-0.25, 0.5*w-0.25];
+sVolume = em.src.volCharge(1e-9,unitCube, ...
+    [0 1],[0 1],[0 1],6,6,6,'gauss');
+sources = {sm, sLine, sVolume};
+sourceNames = {'multiple-point-charge','finite-line','volume-charge'};
+for isrc = 1:numel(sources)
+    for iloop = 1:numel(loops)
+        C = em.field.circulation( ...
+            @(r) em.field.E(sources{isrc},r), ...
+            loops{iloop},[0 2*pi],400);
+        em.test.assertClose(C,0,2e-6, ...
+            sprintf('Circulation: %s source, loop %d', ...
+            sourceNames{isrc},iloop));
+    end
 end
 
 %% 9. Non-conservative control field has nonzero circulation
@@ -173,6 +193,51 @@ ax = findall(gcf,'Type','axes');
 
 assert(~isempty(ax), ...
     'contourV should create axes');
+
+%% Required visualization: dipole equipotentials and normalized field arrows
+sdipole = em.src.merge( ...
+    em.src.pointCharge(1e-9,[0.37 0 0]), ...
+    em.src.pointCharge(-1e-9,[-0.37 0 0]));
+em.viz.contourV(@(r) em.field.V(sdipole,r), ...
+    [-2 2],[-2 2],50,struct('title','Dipole Equipotentials'));
+figBeforeOverlay = gcf;
+em.viz.quiver2(@(r) em.field.E(sdipole,r), ...
+    [-2 2],[-2 2],17, ...
+    struct('normalize',true,'title','Normalized Dipole Field','newFigure',false));
+assert(isequal(gcf,figBeforeOverlay), ...
+    'quiver2 with newFigure=false should overlay the current figure');
+
+%% Required check 6: compare finite-extent and growing-extent discretizations
+% Compare two discretizations of a finite line with the same geometry.
+finiteLine = @(t) [t zeros(size(t)) zeros(size(t))];
+sFiniteN  = em.src.lineCharge(1e-9,finiteLine,[0 10],100);
+sFinite2N = em.src.lineCharge(1e-9,finiteLine,[0 10],200);
+lastwarn('');
+VFiniteN = em.field.V(sFiniteN,[0 0 2]);
+[wFinite,~] = lastwarn;
+lastwarn('');
+VFinite2N = em.field.V(sFinite2N,[0 0 2]);
+[wFinite2N,~] = lastwarn;
+assert(isempty(wFinite) && isempty(wFinite2N), ...
+    'a finite line should not trigger the unbounded-source warning');
+assert(abs(VFiniteN-VFinite2N) < 1e-4*max(abs(VFinite2N),eps), ...
+    'potential for a finite line should converge as N doubles');
+
+% For the unbounded-source approximation, the represented extent grows
+% along with N. The V warning is a heuristic based on extent/distance; the
+% N-versus-2N comparison separately demonstrates the non-convergent trend.
+sGrowingN  = em.src.lineCharge(1e-9,finiteLine,[0 200],200);
+sGrowing2N = em.src.lineCharge(1e-9,finiteLine,[0 400],400);
+lastwarn('');
+VGrowingN = em.field.V(sGrowingN,[0 0 2]);
+[wGrowing,~] = lastwarn;
+lastwarn('');
+VGrowing2N = em.field.V(sGrowing2N,[0 0 2]);
+[wGrowing2N,~] = lastwarn;
+assert(~isempty(wGrowing) || ~isempty(wGrowing2N), ...
+    'em.field.V should warn for a source whose extent grows with N');
+assert(abs(VGrowingN-VGrowing2N) > 1e-3*max(abs(VGrowingN),eps), ...
+    'potential for the growing-extent source should not converge');
 
 disp('  test_lab06 checks complete');
 

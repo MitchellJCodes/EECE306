@@ -44,8 +44,7 @@ function [pos,w] = vol(volume,uinterval,vinterval,qinterval,Nu,Nv,Nq,rule)
     wt = abs(WU(:).*WV(:).*WQ(:));
 
     % Positions
-    pos = volume(U,V,Q);
-    pos = reshape(pos,[],3);
+    pos = evalVolume(volume,U,V,Q);
 
     % Numerical derivatives
     hu = eps^(1/5) .* (1 + abs(U));
@@ -53,22 +52,22 @@ function [pos,w] = vol(volume,uinterval,vinterval,qinterval,Nu,Nv,Nq,rule)
     hq = eps^(1/5) .* (1 + abs(Q));
 
     % Derivative with respect to u
-    r_um2 = volume(U-2*hu,V,Q);
-    r_um1 = volume(U-hu,V,Q);
-    r_up1 = volume(U+hu,V,Q);
-    r_up2 = volume(U+2*hu,V,Q);
+    r_um2 = evalVolume(volume,U-2*hu,V,Q);
+    r_um1 = evalVolume(volume,U-hu,V,Q);
+    r_up1 = evalVolume(volume,U+hu,V,Q);
+    r_up2 = evalVolume(volume,U+2*hu,V,Q);
 
     % Derivative with respect to v
-    r_vm2 = volume(U,V-2*hv,Q);
-    r_vm1 = volume(U,V-hv,Q);
-    r_vp1 = volume(U,V+hv,Q);
-    r_vp2 = volume(U,V+2*hv,Q);
+    r_vm2 = evalVolume(volume,U,V-2*hv,Q);
+    r_vm1 = evalVolume(volume,U,V-hv,Q);
+    r_vp1 = evalVolume(volume,U,V+hv,Q);
+    r_vp2 = evalVolume(volume,U,V+2*hv,Q);
 
     % Derivative with respect to q
-    r_qm2 = volume(U,V,Q-2*hq);
-    r_qm1 = volume(U,V,Q-hq);
-    r_qp1 = volume(U,V,Q+hq);
-    r_qp2 = volume(U,V,Q+2*hq);
+    r_qm2 = evalVolume(volume,U,V,Q-2*hq);
+    r_qm1 = evalVolume(volume,U,V,Q-hq);
+    r_qp1 = evalVolume(volume,U,V,Q+hq);
+    r_qp2 = evalVolume(volume,U,V,Q+2*hq);
 
     r_um2 = reshape(r_um2,[],3);
     r_um1 = reshape(r_um1,[],3);
@@ -109,4 +108,25 @@ function [pos,w] = vol(volume,uinterval,vinterval,qinterval,Nu,Nv,Nq,rule)
 
     w = w(:);
 
+end
+
+function r = evalVolume(fun,u,v,q)
+% Support both vectorized element-wise handles and scalar-only handles.
+try
+    r = fun(u,v,q);
+    if numel(r) == 3*numel(u)
+        r = reshape(r,[],3);
+        return
+    end
+catch
+    % Retry pointwise below for parameterizations written with * or ^.
+end
+r = zeros(numel(u),3);
+for ii = 1:numel(u)
+    ri = fun(u(ii),v(ii),q(ii));
+    if numel(ri) ~= 3
+        error('volume must return one 1-by-3 position per parameter triple');
+    end
+    r(ii,:) = reshape(ri,1,3);
+end
 end

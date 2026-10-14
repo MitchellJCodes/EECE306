@@ -1,5 +1,5 @@
 
-function [pos,w] = surf(surface,uinterval,vinterval,Nu,Nv)
+function [pos,w] = surf(surface,uinterval,vinterval,Nu,Nv,rule)
 % em.quad.surf
 % Quadrature over a parametrized surface
 %
@@ -7,10 +7,15 @@ function [pos,w] = surf(surface,uinterval,vinterval,Nu,Nv)
 % uinterval - [u0 u1]
 % vinterval - [v0 v1]
 % Nu, Nv - number of quadrature points
+% rule - quadrature rule (optional; defaults to midpoint)
 %
 % Returns:
 % pos - Nu*Nv by 3
 % w - Nu*Nv by 1
+
+    if nargin < 6 || isempty(rule)
+        rule = 'midpoint';
+    end
 
     ua = uinterval(1);
     ub = uinterval(2);
@@ -19,8 +24,8 @@ function [pos,w] = surf(surface,uinterval,vinterval,Nu,Nv)
     vb = vinterval(2);
 
     % Midpoint quadrature in each parameter
-    [u,wu] = em.quad.nodes(ua,ub,Nu,'midpoint');
-    [v,wv] = em.quad.nodes(va,vb,Nv,'midpoint');
+    [u,wu] = em.quad.nodes(ua,ub,Nu,rule);
+    [v,wv] = em.quad.nodes(va,vb,Nv,rule);
     
     % Tensor-product grid
     [U,V] = ndgrid(u,v);
@@ -34,22 +39,21 @@ function [pos,w] = surf(surface,uinterval,vinterval,Nu,Nv)
     wt = abs(WU(:).*WV(:));
 
     % Surface positions
-    pos = surface(U,V);
-    pos = reshape(pos,[],3);
+    pos = evalSurface(surface,U,V);
 
     % Numerical partial derivatives.
     hu = eps^(1/5) .* (1 + abs(U));
     hv = eps^(1/5) .* (1 + abs(V));
 
-    r_um2 = surface(U - 2*hu,V);
-    r_um1 = surface(U - hu,V);
-    r_up1 = surface(U + hu,V);
-    r_up2 = surface(U + 2*hu,V);
+    r_um2 = evalSurface(surface,U - 2*hu,V);
+    r_um1 = evalSurface(surface,U - hu,V);
+    r_up1 = evalSurface(surface,U + hu,V);
+    r_up2 = evalSurface(surface,U + 2*hu,V);
 
-    r_vm2 = surface(U,V - 2*hv);
-    r_vm1 = surface(U,V - hv);
-    r_vp1 = surface(U,V + hv);
-    r_vp2 = surface(U,V + 2*hv);
+    r_vm2 = evalSurface(surface,U,V - 2*hv);
+    r_vm1 = evalSurface(surface,U,V - hv);
+    r_vp1 = evalSurface(surface,U,V + hv);
+    r_vp2 = evalSurface(surface,U,V + 2*hv);
 
     r_um2 = reshape(r_um2,[],3);
     r_um1 = reshape(r_um1,[],3);
@@ -78,4 +82,25 @@ function [pos,w] = surf(surface,uinterval,vinterval,Nu,Nv)
 
     w = w(:);
 
+end
+
+function r = evalSurface(fun,u,v)
+% Support both vectorized element-wise handles and scalar-only handles.
+try
+    r = fun(u,v);
+    if numel(r) == 3*numel(u)
+        r = reshape(r,[],3);
+        return
+    end
+catch
+    % Retry pointwise below for parameterizations written with * or ^.
+end
+r = zeros(numel(u),3);
+for ii = 1:numel(u)
+    ri = fun(u(ii),v(ii));
+    if numel(ri) ~= 3
+        error('surface must return one 1-by-3 position per parameter pair');
+    end
+    r(ii,:) = reshape(ri,1,3);
+end
 end

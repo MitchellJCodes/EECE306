@@ -8,6 +8,5 @@ if isequal(size(r0), [1 3])
     s.q = Q;
 
 else
-    5
     error('r0 must be a 1x3 position');
 end

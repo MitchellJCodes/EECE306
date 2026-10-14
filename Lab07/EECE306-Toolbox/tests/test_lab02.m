@@ -28,6 +28,9 @@ disp(em.coord.c2sph([0 0 1]))
 
 disp('c2sph([0 0 -1]) ='); 
 disp(em.coord.c2sph([0 0 -1]))
+originSpherical = em.coord.c2sph([0 0 0]);
+assert(all(isfinite(originSpherical)) && originSpherical(1) == 0, ...
+    'spherical conversion at the origin must return finite conventional angles');
 
 q = [ 1 1 0; -1 1 0; -1 -1 0; 1 -1 0 ];
 p = em.coord.c2cyl(q);

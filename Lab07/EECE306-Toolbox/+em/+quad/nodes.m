@@ -44,42 +44,45 @@ function [t,w] = nodes(a,b,N,rule)
                 w(end) = h/2;
             end
 
-        % Simpson rule
-        % N is the number of subintervals.
-        % N must be even.
-        %
-        % The rule uses N+1 equally spaced nodes.
+        % Composite Simpson rule. N is the requested number of nodes.
+        % Odd N uses Simpson 1/3 throughout. Even N uses Simpson 1/3
+        % on the first N-3 nodes and Simpson 3/8 on the final 4 nodes,
+        % preserving N nodes while retaining fourth-order accuracy.
         case 'simpson'
 
-            if N == 1
-                
-                % With one subinterval, Simpson is not possible
-                % Fall back to trapezoidal rule
-                t = linspace(a,b,2)';
-                h = b-a;
-
-                w = [h/2; h/2];
-
-            elseif mod(N,2) ~= 0
-
-                error('Simpson rule requires N to be even');
-
+            if N < 2
+                t = (a+b)/2;
+                w = b-a;
             else
+                t = linspace(a,b,N)';
+                h = (b-a)/(N-1);
+                w = zeros(N,1);
 
-                h = (b-a)/N;
-
-                t = linspace(a,b,N+1)';
-
-                % Start with the endpoint weights
-                w = ones(N+1,1);
-
-                % Interior even-indexed nodes get weight 2
-                w(3:2:N-1) = 2;
-
-                % Interior odd-indexed nodes get weight 4
-                w(2:2:N) = 4;
-
-                w = (h/3)*w;
+                if mod(N,2) == 1
+                    % Standard composite Simpson 1/3 rule.
+                    w(1) = 1;
+                    w(end) = 1;
+                    w(2:2:N-1) = 4;
+                    w(3:2:N-2) = 2;
+                    w = (h/3)*w;
+                elseif N == 2
+                    % Only one interval: trapezoidal fallback.
+                    w(:) = h/2;
+                else
+                    % Simpson 1/3 on N-3 nodes (even number of intervals).
+                    n13 = N-3;
+                    if n13 >= 3
+                        w(1) = h/3;
+                        w(2:2:n13-1) = 4*h/3;
+                        w(3:2:n13-2) = 2*h/3;
+                        w(n13) = h/3;
+                    end
+                    % Simpson 3/8 on the final three intervals.
+                    w(N-3) = w(N-3) + 3*h/8;
+                    w(N-2) = 9*h/8;
+                    w(N-1) = 9*h/8;
+                    w(N) = 3*h/8;
+                end
             end
 
         % Gauss-Legendre rule

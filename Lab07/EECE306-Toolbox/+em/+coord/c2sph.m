@@ -11,7 +11,11 @@ y = r(:,2);
 z = r(:,3);
 
 radial = sqrt(x.^2 + y.^2 + z.^2);
-theta = acos(z ./radial);
+theta = zeros(size(radial));
+nonzero = radial > 0;
+theta(nonzero) = acos(max(-1,min(1,z(nonzero)./radial(nonzero))));
 phi = mod(atan2(y,x), 2*pi);
+% At the origin both angles are mathematically undefined; use zero by convention.
+phi(~nonzero) = 0;
 s = [radial, theta, phi];
 end

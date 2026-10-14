@@ -51,15 +51,48 @@ em.test.assertClose(ratio, 8, 1e-3, ...
     'Dipole far-field ratio');
 
 %% The picture, raw and normalized
-figure;
 em.viz.quiver2(@(r) em.field.E(s2, r), [-0.5 0.5], [-0.5 0.5], 15, ...
     struct('normalize', false, 'title', 'Two equal charges, raw magnitudes'));
-figure;
 em.viz.quiver2(@(r) em.field.E(s2, r), [-0.5 0.5], [-0.5 0.5], 15, ...
     struct('normalize', true, 'title', 'Two equal charges, direction only'));
 % The raw plot is hard to read because the lines are all the different sizes,
 % and normalizing the plot makes it easier to see the direction of the field.
 % This however loses information about the magnitude at a single point.
+
+%% Required check 5: merge accepts three or more same-type sources
+q3 = em.src.pointCharge(3e-9,[0 0.2 0]);
+s3 = em.src.merge(q1,q2,q3);
+assert(size(s3.pos,1) == size(q1.pos,1)+size(q2.pos,1)+size(q3.pos,1), ...
+    'Merging three charge sources must concatenate all elements');
+assert(numel(s3.q) == numel(q1.q)+numel(q2.q)+numel(q3.q), ...
+    'Merged charge data must contain all source elements');
+
+%% Required check 6: charge/current mixing must error
+current = struct('type','current','pos',[0 0 0],'w',1,'Idl',[1 0 0]);
+caught = false;
+try
+    em.src.merge(q1,current);
+catch
+    caught = true;
+end
+assert(caught,'Merging charge and current sources must raise an error');
+
+%% Required check 7: field at a point-charge location must error
+caught = false;
+try
+    em.field.E(em.src.pointCharge(1e-9,[0 0 0]),[0 0 0]);
+catch
+    caught = true;
+end
+assert(caught,'Evaluating E at a point charge must raise an error');
+
+caught = false;
+try
+    em.field.V(em.src.pointCharge(1e-9,[0 0 0]),[0 0 0]);
+catch
+    caught = true;
+end
+assert(caught,'Evaluating V at a point charge must raise an error');
 
 %% Timing at N = 5000
 pts5k = randn(5000,3) + 5;

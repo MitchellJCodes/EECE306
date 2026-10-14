@@ -1,1 +1,2 @@
-% This folder holds the em.derive module. Add your .m files here.
+% em.derive is reserved for derived/symbolic expressions.
+% No functions are currently implemented in this package.
