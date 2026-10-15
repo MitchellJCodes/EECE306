@@ -96,7 +96,9 @@ figure; loglog(Nt, td, 'o-', Nt, ts, 's-'); grid on
 xlabel('grid size N'); ylabel('wall time (s)')
 legend('direct', 'SOR at optimal omega', 'location', 'northwest')
 title('Cost against grid size')
-% The direct solver generally has a cost of (O(N^3)), while SOR requires (O(N^2)) work per iteration. The direct solver was faster on our small test grids; a crossover was not observed in the tested range.
+% The direct solver generally has a cost of (O(N^3)), while SOR requires (O(N^2))
+% work per iteration. The direct solver was faster on our small test grids;
+% a crossover was not observed in the tested range.
 
 %% A Laplace sanity pair
 % One edge held at 1, the opposite at 0, Neumann on the other two. The
@@ -139,10 +141,15 @@ fprintf('enclosed charge over eps0       = %.4e\n', Qenc/e0);
 fprintf('relative difference             = %.2e\n', abs(flux - Qenc/e0)/(Qenc/e0));
 
 %% Interpretation
-The maximum error was \(8.224\times10^{-5}\), and the observed convergence order was 2.055, matching the expected second-order accuracy. An order near 1 would suggest a boundary-condition error. A common cause is incorrectly handling boundary nodes or using a first-order Neumann approximation. The results support the correctness of the solver.
+% The maximum error was \(8.224\times10^{-5}\), and the observed convergence order
+% was 2.055, matching the expected second-order accuracy. An order near 1 would
+% suggest a boundary-condition error. A common cause is incorrectly handling
+% boundary nodes or using a first-order Neumann approximation.
+% The results support the correctness of the solver.
 
 %% Problems encountered
-A lot of time went into addressing feedback from prior labs, although some issues noted in the feedback were also found during later labs. 
+% A lot of time went into addressing feedback from prior labs,
+% although some issues noted in the feedback were also found during later labs. 
 
 %% Full test suite
 runTests
