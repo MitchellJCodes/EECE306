@@ -1,5 +1,5 @@
 %% EECE 306 Lab 7 notebook. Writing Your Own Poisson Solver
-% *Team NN.* TODO replace with your team number and member names.
+% *Team 03 — Carissa McWilliams, Amelia Harris, and Mitch Nazareth.*
 %
 % Fill in every TODO, run |publish('Lab07_notebook.m')| from the toolbox
 % root, print the HTML to PDF, three to five pages. A full run of this
@@ -101,9 +101,7 @@ figure; loglog(Nt, td, 'o-', Nt, ts, 's-'); grid on
 xlabel('grid size N'); ylabel('wall time (s)')
 legend('direct', 'SOR at optimal omega', 'location', 'northwest')
 title('Cost against grid size')
-% TODO one or two sentences. On grids this small the direct method wins
-% outright. Name the two growth rates, and say at what problem size the
-% trend claims the tables turn.
+% The direct solver generally has a cost of (O(N^3)), while SOR requires (O(N^2)) work per iteration. The direct solver was faster on our small test grids; a crossover was not observed in the tested range.
 
 %% A Laplace sanity pair
 % One edge held at 1, the opposite at 0, Neumann on the other two. The
@@ -146,13 +144,10 @@ fprintf('enclosed charge over eps0       = %.4e\n', Qenc/e0);
 fprintf('relative difference             = %.2e\n', abs(flux - Qenc/e0)/(Qenc/e0));
 
 %% Interpretation
-% TODO three to six sentences. The manufactured solution was reproduced
-% and the observed order matched the stencil. Say what an observed order
-% of 1 would have told you, and name the mistake that classically causes
-% it.
+The maximum error was \(8.224\times10^{-5}\), and the observed convergence order was 2.055, matching the expected second-order accuracy. An order near 1 would suggest a boundary-condition error. A common cause is incorrectly handling boundary nodes or using a first-order Neumann approximation. The results support the correctness of the solver.
 
 %% Problems encountered
-% TODO honest account, or NONE.
+A lot of time went into addressing feedback from prior labs, although some issues noted in the feedback were also found during later labs. 
 
 %% Full test suite
 runTests
