@@ -1,10 +1,5 @@
 %% EECE 306 Lab 7 notebook. Writing Your Own Poisson Solver
 % *Team 03 — Carissa McWilliams, Amelia Harris, and Mitch Nazareth.*
-%
-% Fill in every TODO, run |publish('Lab07_notebook.m')| from the toolbox
-% root, print the HTML to PDF, three to five pages. A full run of this
-% notebook takes about ten minutes, the solver cells dominate. Run cells
-% one at a time while working, publish once at the end.
 
 %% Setup
 clear; close all;
