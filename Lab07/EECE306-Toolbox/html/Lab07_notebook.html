@@ -140,16 +140,9 @@ set(gca, <span class="string">'YScale'</span>, <span class="string">'log'</span>
 xlabel(<span class="string">'iteration'</span>); ylabel(<span class="string">'residual'</span>)
 title(<span class="string">'Three iterative methods on the same 41 x 41 problem'</span>)</pre>
 
-<pre class="oct-code-output">warning: jacobi did not reach tolerance 1e-06 after 3000 iterations (residual 9.49e-05)
-warning: called from
-    poisson2d at line 231 column 5
-    publish&gt;eval_code_helper at line 1081 column 3
-    publish&gt;eval_code at line 997 column 11
-    publish at line 402 column 5
- 
-jacobi  iterations =  3000
-gs      iterations =  2239
-sor     iterations =   122
+<pre class="oct-code-output">jacobi  iterations =  2604
+gs      iterations =  1415
+sor     iterations =   102
 </pre>
 <img src="Lab07_notebook-2.png" alt="Lab07_notebook-2.png"><h2><a id="node5">The omega scan on two grids</a></h2>
 <p>The handout asks for a scan from 1.0 to 1.99, repeated on a grid twice
@@ -203,9 +196,9 @@ title(<span class="string">'Cost against grid size'</span>)
 <span class="comment">% a crossover was not observed in the tested range.</span>
 </pre>
 
-<pre class="oct-code-output">N =  41   direct 0.116 s   SOR 2.986 s
-N =  61   direct 0.264 s   SOR 10.167 s
-N =  81   direct 0.482 s   SOR 23.951 s
+<pre class="oct-code-output">N =  41   direct 0.052 s   SOR 2.514 s
+N =  61   direct 0.113 s   SOR 8.175 s
+N =  81   direct 0.197 s   SOR 19.287 s
 </pre>
 <img src="Lab07_notebook-4.png" alt="Lab07_notebook-4.png"><h2><a id="node7">A Laplace sanity pair</a></h2>
 <p>One edge held at 1, the opposite at 0, Neumann on the other two. The
@@ -222,7 +215,7 @@ inner = VL(2:end-1, 2:end-1);
 fprintf(<span class="string">'interior range [%.4f, %.4f] inside boundary range [0, 1] = %d\n'</span>, ...
     min(inner(:)), max(inner(:)), min(inner(:)) &gt;= 0 &amp;&amp; max(inner(:)) &lt;= 1);</pre>
 
-<pre class="oct-code-output">max deviation from the linear ramp = 8.882e-16
+<pre class="oct-code-output">max deviation from the linear ramp = 1.110e-15
 interior range [0.0250, 0.9750] inside boundary range [0, 1] = 1
 </pre>
 <h2><a id="node8">Gauss's law closes the loop</a></h2>
@@ -306,7 +299,7 @@ at (0, 5, 0), (Ar, Atheta, Aphi) =
    3.0000e+00   1.8370e-16  -2.0000e+00
 at (4, 0, 0), (Ar, Atheta, Aphi) =
    2.0000e+00   1.2246e-16   3.0000e+00
-  PASS  test_lab02            0.02 s
+  PASS  test_lab02            0.01 s
    r (m)    relative error
     1.0000         0
     2.0000         0
@@ -321,13 +314,13 @@ at (4, 0, 0), (Ar, Atheta, Aphi) =
 max |Ex| on bisector      = 0.000e+00 V/m
 max |E| on the same plane = 6.298e+02 V/m
 |E(r)| / |E(2r)| = 8.0003   (expect near 8 for a dipole)
-em.field.E on 5000 points took 0.001 s  (requirement, under 2 s)
-  PASS  test_lab03            0.37 s
+em.field.E on 5000 points took 0.000 s  (requirement, under 2 s)
+  PASS  test_lab03            0.26 s
   test_lab04 checks complete
-  PASS  test_lab04            0.54 s
+  PASS  test_lab04            0.34 s
 div D = 1.003980e-06, rho_v = 1.000000e-06
   test_lab05 checks complete
-  PASS  test_lab05            0.60 s
+  PASS  test_lab05            0.35 s
 warning: The represented source extent is at least 50 times the median nearest-element distance for these observation points. Check finite extent; V = 0 at infinity is not valid for an ideal unbounded source.
 warning: called from
     V at line 51 column 9
@@ -349,13 +342,11 @@ warning: called from
     publish at line 402 column 5
  
   test_lab06 checks complete
-  PASS  test_lab06            1.49 s
-  Lab 7 MMS error 8.224e-05; observed order 2.055; Gauss-law relative error 0.000
-  test_lab07 checks complete
-  PASS  test_lab07           23.43 s
+  PASS  test_lab06            1.15 s
+  FAIL  test_lab07            0.34 s   structure has no member 'finalResidual'
 --------------------------------------------------------------
-  7 passed, 0 failed, 7 total
-  All tests passing.
+  6 passed, 1 failed, 7 total
+  Re-run with runTests('verbose', true) for full messages.
  
 </pre>
 <img src="Lab07_notebook-5.png" alt="Lab07_notebook-5.png"><img src="Lab07_notebook-6.png" alt="Lab07_notebook-6.png">
