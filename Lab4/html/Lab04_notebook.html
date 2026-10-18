@@ -1,0 +1,512 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      -->
+<title>EECE 306 Lab 4 notebook. The Quadrature Engine and Continuous Charge Distributions</title>
+<meta name="generator" content="MATLAB 24.2">
+<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
+<meta name="DC.date" content="2026-10-17">
+<meta name="DC.source" content="Lab04_notebook.m">
+<style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style>
+</head>
+<body>
+<div class="content">
+<h1>EECE 306 Lab 4 notebook. The Quadrature Engine and Continuous Charge Distributions</h1>
+<!--introduction-->
+<p>*Team 3: Amelia Harris, Carissa McWilliams, Mitch Nazareth. * TODO replace with your team number and member names.</p>
+<p>Fill in every TODO, run <tt>publish('Lab04_notebook.m')</tt> from the toolbox root, print the HTML to PDF, three to five pages.</p>
+<!--/introduction-->
+<h2>Contents</h2>
+<div>
+<ul>
+<li>
+<a href="#1">Setup</a>
+</li>
+<li>
+<a href="#2">Geometry before physics</a>
+</li>
+<li>
+<a href="#3">Observed order of each rule</a>
+</li>
+<li>
+<a href="#4">The Gauss rule does not fit the same mold</a>
+</li>
+<li>
+<a href="#5">Finite line against the infinite line formula</a>
+</li>
+<li>
+<a href="#6">Disk against the infinite sheet formula</a>
+</li>
+<li>
+<a href="#7">A nonuniform density through the same constructor</a>
+</li>
+<li>
+<a href="#8">Interpretation</a>
+</li>
+<li>
+<a href="#9">Problems encountered</a>
+</li>
+<li>
+<a href="#10">Full test suite</a>
+</li>
+</ul>
+</div>
+<h2 id="1">Setup</h2>
+<pre class="codeinput">clear; close <span class="string">all</span>;
+e0 = em.const.eps0();
+</pre>
+<h2 id="2">Geometry before physics</h2>
+<p>The sum of the weights must return length, area, and volume with no field anywhere in sight.</p>
+<pre class="codeinput">circ = @(t)[cos(t) sin(t) zeros(size(t))];
+[~, wc] = em.quad.line(circ, [0 2*pi], 400);
+sph = @(th,ph) [sin(th).*cos(ph) sin(th).*sin(ph) cos(th)];
+[~, ws] = em.quad.surf(sph, [0 pi], [0 2*pi], 60, 120);
+ball = @(u,v,w)[w.*sin(u).*cos(v) w.*sin(u).*sin(v) w.*cos(u)];
+[~, wv] = em.quad.vol(ball, [0 pi], [0 2*pi], [0 1], 30, 60, 30);
+sq = @(u,v)[u v zeros(size(u))];
+[~, wq] = em.quad.surf(sq, [0 1], [0 1], 20, 20);
+fprintf(<span class="string">'circle length  %.6f   expect %.6f\n'</span>, sum(wc), 2*pi);
+em.test.assertClose(sum(wc), 2*pi, 1e-3, <span class="string">'unit circle arc length'</span>);
+fprintf(<span class="string">'sphere area    %.6f   expect %.6f\n'</span>, sum(ws), 4*pi);
+em.test.assertClose(sum(ws), 4*pi, 1e-3, <span class="string">'unit sphere surface'</span>);
+fprintf(<span class="string">'ball volume    %.6f   expect %.6f\n'</span>, sum(wv), 4*pi/3);
+em.test.assertClose(sum(wv), 4*pi/3, 1e-3, <span class="string">'unit ball volume'</span>);
+fprintf(<span class="string">'square area    %.6f   expect %.6f\n'</span>, sum(wq), 1);
+em.test.assertClose(sum(wq), 1, 1e-3, <span class="string">'unit square area'</span>);
+</pre>
+<pre class="codeoutput">circle length  6.283185   expect 6.283185
+sphere area    12.567806   expect 12.566371
+ball volume    4.189541   expect 4.188790
+square area    1.000000   expect 1.000000
+</pre>
+<h2 id="3">Observed order of each rule</h2>
+<p>Errors are collected in a plain loop, then the standard fitting tool reports the observed order. One representative log log plot is shown.</p>
+<pre class="codeinput">Iex = exp(1) - 1;
+Ns = [8 16 32 64 128]';
+rules = {<span class="string">'midpoint'</span>, <span class="string">'trapz'</span>, <span class="string">'simpson'</span>};
+<span class="keyword">for</span> k = 1:3
+    rule = rules{k};
+    errs = zeros(size(Ns));
+    <span class="keyword">for</span> j = 1:numel(Ns)
+        [t, w] = em.quad.nodes(0, 1, Ns(j), rule);
+        errs(j) = abs(sum(exp(t) .* w) - Iex);
+    <span class="keyword">end</span>
+    p = em.test.convergence(@(N) errs(Ns == N), Ns, struct(<span class="string">'plot'</span>, strcmp(rule,<span class="string">'simpson'</span>)));
+    fprintf(<span class="string">'%-9s observed order p = %.2f\n'</span>, rule, p);
+<span class="keyword">end</span>
+</pre>
+<pre class="codeoutput">midpoint  observed order p = 2.00
+trapz     observed order p = 2.09
+simpson   observed order p = 4.00
+</pre>
+<h2 id="4">The Gauss rule does not fit the same mold</h2>
+<pre class="codeinput">
+<span class="keyword">for</span> N = [2 4 8 16]
+    [t, w] = em.quad.nodes(0, 1, N, <span class="string">'gauss'</span>);
+    fprintf(<span class="string">'gauss N = %2d   error = %.3e\n'</span>, N, abs(sum(exp(t) .* w) - Iex));
+<span class="keyword">end</span>
+<span class="comment">% TODO two to four sentences. The three fitted orders above are clean</span>
+<span class="comment">% power laws and the Gauss errors are not. Explain what convergence</span>
+<span class="comment">% faster than any power of N means and why a straight line fit is the</span>
+<span class="comment">% wrong model for it.</span>
+
+
+<span class="comment">% The Gauss quadrature is exact for polynomials up to degree 2N - 1, so its</span>
+<span class="comment">% error falls faster than any fixed power of N for a smooth integrand (such</span>
+<span class="comment">% as e^(t)), which means it decreases more rapidly than 1/N^(p) for any</span>
+<span class="comment">% fixed p. Because of this mismatch, the Gauss errors do not follow a</span>
+<span class="comment">% power law relationship, and fitting a straight line to the data gives an</span>
+<span class="comment">% appoximate slope, which is not a good method to measure its convergence.</span>
+</pre>
+<h2 id="5">Finite line against the infinite line formula</h2>
+<pre class="codeinput">d = 1;
+Lod = logspace(0, 2, 15)';
+ratio = zeros(size(Lod));
+<span class="keyword">for</span> k = 1:numel(Lod)
+    L = Lod(k) * d;
+    lineC = @(t)[zeros(size(t)) zeros(size(t)) t];
+    sl = em.src.lineCharge(1e-9, lineC, [-L/2 L/2], 800);
+    Ef = em.field.E(sl, [d 0 0]);
+    ratio(k) = Ef(1) / (1e-9 / (2*pi*e0*d));
+<span class="keyword">end</span>
+figure; semilogx(Lod, ratio, <span class="string">'o-'</span>); grid <span class="string">on</span>
+xlabel(<span class="string">'L / d'</span>); ylabel(<span class="string">'E finite over E infinite'</span>)
+title(<span class="string">'Finite line approaching the infinite line'</span>)
+iAbove = find(ratio &gt; 0.99, 1);
+fprintf(<span class="string">'ratio first exceeds 0.99 at L/d about %.1f\n'</span>, Lod(iAbove));
+</pre>
+<pre class="codeoutput">ratio first exceeds 0.99 at L/d about 19.3
+</pre>
+<img vspace="5" hspace="5" src="Lab04_notebook_03.png" alt=""> <h2 id="6">Disk against the infinite sheet formula</h2>
+<pre class="codeinput">h = 1;
+aoh = logspace(0, 2.1, 14)';
+ratioD = zeros(size(aoh));
+<span class="keyword">for</span> k = 1:numel(aoh)
+    a = aoh(k) * h;
+    disk = @(u,v)[u.*cos(v) u.*sin(v) zeros(size(u))];
+    sd = em.src.surfCharge(1e-9, disk, [0 a], [0 2*pi], 80, 80);
+    Ed = em.field.E(sd, [0 0 h]);
+    ratioD(k) = Ed(3) / (1e-9 / (2*e0));
+<span class="keyword">end</span>
+figure; semilogx(aoh, ratioD, <span class="string">'o-'</span>); grid <span class="string">on</span>
+xlabel(<span class="string">'a / h'</span>); ylabel(<span class="string">'E disk over E sheet'</span>)
+title(<span class="string">'Disk approaching the infinite sheet'</span>)
+iA = find(ratioD &gt; 0.99, 1);
+fprintf(<span class="string">'ratio first exceeds 0.99 at a/h about %.1f\n'</span>, aoh(iA));
+</pre>
+<pre class="codeoutput">ratio first exceeds 0.99 at a/h about 59.8
+</pre>
+<h2 id="7">A nonuniform density through the same constructor</h2>
+<pre class="codeinput">lineC = @(t)[zeros(size(t)) zeros(size(t)) t];
+sn = em.src.lineCharge(@(r) r(:,3), lineC, [-1 1], 400);
+em.test.assertClose(sum(sn.q .* sn.w), 0, 1e-6, <span class="string">'net zero line charge'</span>)
+fprintf(<span class="string">'net charge of rho(z) = z on [-1, 1] = %.3e C  (expect 0)\n'</span>, sum(sn.q .* sn.w));
+</pre>
+<h2 id="8">Interpretation</h2>
+<p>TODO three to six sentences. The convergence order was measured, not assumed. State one situation later in the course where a wrong observed order will be the first visible symptom of a bug.</p>
+<pre class="codeinput">
+<span class="comment">% Comparing the observed convergence order against the theoretical order is</span>
+<span class="comment">% a reliable method to catch bugs in the code. For example, a second order</span>
+<span class="comment">% method that measures as first order almost always has a boundary handled</span>
+<span class="comment">% incorrectly, or an off-by-one in the node placement. This will be</span>
+<span class="comment">% important in the next few labs, especially when dealing with weights and</span>
+<span class="comment">% electromagnetic surfaces.</span>
+</pre>
+<h2 id="9">Problems encountered</h2>
+<p>TODO honest account, or NONE.</p>
+<pre class="codeinput">
+<span class="comment">% WHen calculating the positions of the nodes, the original test file had</span>
+<span class="comment">% errors with dimension mismatch due to not using element-wise</span>
+<span class="comment">% multiplication. We also had some slight round-off error that affected the</span>
+<span class="comment">% legth/area/volume calculations, but it can be considered negligible</span>
+<span class="comment">% because it is small, and assertClose didn't report any gross</span>
+<span class="comment">% inaccuracies. We had to use the simpson rule for the ball and sphere</span>
+<span class="comment">% surface because the error never fell under tolerance. A similar</span>
+<span class="comment">% situtation occured when printing the nonuniform density with %.3e instead</span>
+<span class="comment">% of %.3f.</span>
+</pre>
+<h2 id="10">Full test suite</h2>
+<pre class="codeinput">runTests
+</pre>
+<pre class="codeoutput">
+EECE 306 toolbox test suite
+--------------------------------------------------------------
+24.2.0.3212159 (R2024b) Update 9
+eps0 = 8.8541878128e-12 F/m
+mu0  = 1.2566370614e-06 H/m
+c0   = 2.9979245808e+08 m/s
+eta0 = 376.730314 ohm
+Derived constant checks passed.
+mag([3 4 0])  = 5   (expect 5 exactly)
+unit([3 4 0]) =
+    0.6000    0.8000         0
+
+unit([0 0 0]) (expect all NaN) =
+   NaN   NaN   NaN
+
+angle perpendicular = 1.5707963267949  (expect pi/2)
+angle antiparallel  = 3.14159265358979, real = 1  (expect pi, 1)
+fromTo([1 1 1],[2 3 4]) =
+     1     2     3
+
+mag    input 100x3 output [100 1]
+unit   input 100x3 output [100 3]
+angle  input 100x3 output [100 1]
+fromTo input 100x3 output [100 3]
+  PASS  test_lab01            0.24 s
+spherical   roundtrip max error = 6.357e-15
+cylindrical roundtrip max error = 2.979e-15
+c2sph([0 0 1])  =
+     1     0     0
+
+c2sph([0 0 -1]) =
+    1.0000    3.1416         0
+
+phi in the four quadrants = 0.7854 2.3562 3.9270 5.4978 rad
+all inside [0, 2*pi) = 1
+vector roundtrip (spherical pair) max error = 1.088e-15
+magnitude change under conversion max       = 8.882e-16
+vector roundtrip (cylindrical pair) max error = 6.280e-16
+at (0, 5, 0), (Ar, Atheta, Aphi) =
+    3.0000    0.0000   -2.0000
+
+at (4, 0, 0), (Ar, Atheta, Aphi) =
+    2.0000    0.0000    3.0000
+
+  PASS  test_lab02            0.19 s
+   r (m)    relative error
+    1.0000         0
+    2.0000         0
+    3.0000         0
+    4.0000         0
+    5.0000         0
+    6.0000         0
+    7.0000         0
+    8.0000         0
+    9.0000    0.0000
+   10.0000         0
+
+Minimum charge of positive charges = 7.463e-01 (should be greater than 0)
+Maximum charge of negative charges = -7.463e-01 (should be less than 0)
+max |Ex| on bisector      = 0.000e+00 V/m
+max |E| on the same plane = 5.061e+02 V/m
+element count after first merge = 2 (expect 2)
+Mismatch test passed: em.src.merge(q1, crnt_struct) successfully raised an error.
+|E(r)| / |E(2r)| = 8.0003   (expect near 8 for a dipole)
+Singularity test passed: em.field.E(q, [0 0 0]) successfully raised an error.
+em.field.E on 5000 points took 0.005 s  (requirement, under 2 s)
+Observation points: N = 10, Source Charges: M = 1, Product = 10, Time = 0.000 s
+Observation points: N = 100, Source Charges: M = 1, Product = 100, Time = 0.000 s
+Observation points: N = 1000, Source Charges: M = 1, Product = 1000, Time = 0.000 s
+Observation points: N = 10000, Source Charges: M = 1, Product = 10000, Time = 0.002 s
+Observation points: N = 100000, Source Charges: M = 1, Product = 100000, Time = 0.018 s
+Observation points: N = 1000000, Source Charges: M = 1, Product = 1000000, Time = 0.155 s
+Observation points: N = 10000000, Source Charges: M = 1, Product = 10000000, Time = 1.439 s
+Compution time surpasses time threshold at N=100000000 points: took 19.430 seconds
+  PASS  test_lab03           27.12 s
+circle length  6.283185   expect 6.283185
+sphere area    12.567806   expect 12.566371
+ball volume    4.187181   expect 4.188790
+square area    1.000000   expect 1.000000
+midpoint  observed order p = 2.00
+trapz     observed order p = 2.09
+simpson   observed order p = 4.00
+gauss N =  2   error = 3.855e-04
+gauss N =  4   error = 9.330e-10
+gauss N =  8   error = 6.661e-16
+gauss N = 16   error = 2.887e-15
+ratio first exceeds 0.99 at L/d about 19.3
+ratio first exceeds 0.99 at a/h about 59.8
+net charge of rho(z) = z on [-1, 1] = -0.000 C  (expect 0)
+  PASS  test_lab04            4.05 s
+flux through sphere   = 3.000000e-09 C
+enclosed charge       = 3.000000e-09 C
+relative error        = 4.175e-08 
+flux with charge outside = 0.000 C  (consistent with zero)
+sphere              3.000000e-09 C
+cube                3.000204e-09 C
+hemisphere and cap  3.000001e-09 C
+charge at x = 0.00   flux = 3.000000e-09 C
+charge at x = 0.15   flux = 3.000000e-09 C
+charge at x = 0.30   flux = 3.000000e-09 C
+Nu = 10   div D inside = 1.0163e-06   rho_v = 1.0000e-06   rel err = 1.63e-02
+Nu = 20   div D inside = 1.6814e-06   rho_v = 1.0000e-06   rel err = 6.81e-01
+Nu = 40   div D inside = 7.4061e-07   rho_v = 1.0000e-06   rel err = 2.59e-01
+div D in charge free space = 0.000  (consistent with zero)
+flux with swapped parameter order = -3.000000e-09 C  (sign flipped)
+  PASS  test_lab05            1.63 s
+--------------------------------------------------------------
+  5 passed, 0 failed, 5 total
+  All tests passing.
+
+</pre>
+<p class="footer">
+<br>
+<a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2024b</a>
+<br>
+</p>
+</div>
+<!--
+##### SOURCE BEGIN #####
+%% EECE 306 Lab 4 notebook. The Quadrature Engine and Continuous Charge Distributions
+% *Team 3: Amelia Harris, Carissa McWilliams, Mitch Nazareth.
+% * TODO replace with your team number and member names.
+%
+% Fill in every TODO, run |publish('Lab04_notebook.m')| from the toolbox
+% root, print the HTML to PDF, three to five pages.
+
+%% Setup
+clear; close all;
+e0 = em.const.eps0();
+
+%% Geometry before physics
+% The sum of the weights must return length, area, and volume with no
+% field anywhere in sight.
+circ = @(t)[cos(t) sin(t) zeros(size(t))];
+[~, wc] = em.quad.line(circ, [0 2*pi], 400);
+sph = @(th,ph) [sin(th).*cos(ph) sin(th).*sin(ph) cos(th)];
+[~, ws] = em.quad.surf(sph, [0 pi], [0 2*pi], 60, 120);
+ball = @(u,v,w)[w.*sin(u).*cos(v) w.*sin(u).*sin(v) w.*cos(u)];
+[~, wv] = em.quad.vol(ball, [0 pi], [0 2*pi], [0 1], 30, 60, 30);
+sq = @(u,v)[u v zeros(size(u))];
+[~, wq] = em.quad.surf(sq, [0 1], [0 1], 20, 20);
+fprintf('circle length  %.6f   expect %.6f\n', sum(wc), 2*pi);
+em.test.assertClose(sum(wc), 2*pi, 1e-3, 'unit circle arc length');
+fprintf('sphere area    %.6f   expect %.6f\n', sum(ws), 4*pi);
+em.test.assertClose(sum(ws), 4*pi, 1e-3, 'unit sphere surface');
+fprintf('ball volume    %.6f   expect %.6f\n', sum(wv), 4*pi/3);
+em.test.assertClose(sum(wv), 4*pi/3, 1e-3, 'unit ball volume');
+fprintf('square area    %.6f   expect %.6f\n', sum(wq), 1);
+em.test.assertClose(sum(wq), 1, 1e-3, 'unit square area');
+
+%% Observed order of each rule
+% Errors are collected in a plain loop, then the standard fitting tool
+% reports the observed order. One representative log log plot is shown.
+Iex = exp(1) - 1;
+Ns = [8 16 32 64 128]';
+rules = {'midpoint', 'trapz', 'simpson'};
+for k = 1:3
+    rule = rules{k};
+    errs = zeros(size(Ns));
+    for j = 1:numel(Ns)
+        [t, w] = em.quad.nodes(0, 1, Ns(j), rule);
+        errs(j) = abs(sum(exp(t) .* w) - Iex);
+    end
+    p = em.test.convergence(@(N) errs(Ns == N), Ns, struct('plot', strcmp(rule,'simpson')));
+    fprintf('%-9s observed order p = %.2f\n', rule, p);
+end
+
+%% The Gauss rule does not fit the same mold
+for N = [2 4 8 16]
+    [t, w] = em.quad.nodes(0, 1, N, 'gauss');
+    fprintf('gauss N = %2d   error = %.3e\n', N, abs(sum(exp(t) .* w) - Iex));
+end
+% TODO two to four sentences. The three fitted orders above are clean
+% power laws and the Gauss errors are not. Explain what convergence
+% faster than any power of N means and why a straight line fit is the
+% wrong model for it.
+
+
+% The Gauss quadrature is exact for polynomials up to degree 2N - 1, so its
+% error falls faster than any fixed power of N for a smooth integrand (such
+% as e^(t)), which means it decreases more rapidly than 1/N^(p) for any 
+% fixed p. Because of this mismatch, the Gauss errors do not follow a 
+% power law relationship, and fitting a straight line to the data gives an 
+% appoximate slope, which is not a good method to measure its convergence.
+
+%% Finite line against the infinite line formula
+d = 1;
+Lod = logspace(0, 2, 15)';
+ratio = zeros(size(Lod));
+for k = 1:numel(Lod)
+    L = Lod(k) * d;
+    lineC = @(t)[zeros(size(t)) zeros(size(t)) t];
+    sl = em.src.lineCharge(1e-9, lineC, [-L/2 L/2], 800);
+    Ef = em.field.E(sl, [d 0 0]);
+    ratio(k) = Ef(1) / (1e-9 / (2*pi*e0*d));
+end
+figure; semilogx(Lod, ratio, 'o-'); grid on
+xlabel('L / d'); ylabel('E finite over E infinite')
+title('Finite line approaching the infinite line')
+iAbove = find(ratio > 0.99, 1);
+fprintf('ratio first exceeds 0.99 at L/d about %.1f\n', Lod(iAbove));
+
+%% Disk against the infinite sheet formula
+h = 1;
+aoh = logspace(0, 2.1, 14)';
+ratioD = zeros(size(aoh));
+for k = 1:numel(aoh)
+    a = aoh(k) * h;
+    disk = @(u,v)[u.*cos(v) u.*sin(v) zeros(size(u))];
+    sd = em.src.surfCharge(1e-9, disk, [0 a], [0 2*pi], 80, 80);
+    Ed = em.field.E(sd, [0 0 h]);
+    ratioD(k) = Ed(3) / (1e-9 / (2*e0));
+end
+figure; semilogx(aoh, ratioD, 'o-'); grid on
+xlabel('a / h'); ylabel('E disk over E sheet')
+title('Disk approaching the infinite sheet')
+iA = find(ratioD > 0.99, 1);
+fprintf('ratio first exceeds 0.99 at a/h about %.1f\n', aoh(iA));
+
+%% A nonuniform density through the same constructor
+lineC = @(t)[zeros(size(t)) zeros(size(t)) t];
+sn = em.src.lineCharge(@(r) r(:,3), lineC, [-1 1], 400);
+em.test.assertClose(sum(sn.q .* sn.w), 0, 1e-6, 'net zero line charge')
+fprintf('net charge of rho(z) = z on [-1, 1] = %.3e C  (expect 0)\n', sum(sn.q .* sn.w));
+
+%% Interpretation
+% TODO three to six sentences. The convergence order was measured, not
+% assumed. State one situation later in the course where a wrong observed
+% order will be the first visible symptom of a bug.
+
+% Comparing the observed convergence order against the theoretical order is
+% a reliable method to catch bugs in the code. For example, a second order 
+% method that measures as first order almost always has a boundary handled
+% incorrectly, or an off-by-one in the node placement. This will be
+% important in the next few labs, especially when dealing with weights and
+% electromagnetic surfaces.
+
+%% Problems encountered
+% TODO honest account, or NONE.
+
+% WHen calculating the positions of the nodes, the original test file had 
+% errors with dimension mismatch due to not using element-wise
+% multiplication. We also had some slight round-off error that affected the
+% legth/area/volume calculations, but it can be considered negligible 
+% because it is small, and assertClose didn't report any gross
+% inaccuracies. We had to use the simpson rule for the ball and sphere
+% surface because the error never fell under tolerance. A similar
+% situtation occured when printing the nonuniform density with %.3e instead
+% of %.3f.
+
+%% Full test suite
+runTests
+##### SOURCE END #####
+-->
+</body>
+</html>

@@ -1,0 +1,522 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      -->
+<title>EECE 306 Lab 6 notebook. Electric Potential, the Gradient, and Path Independence</title>
+<meta name="generator" content="MATLAB 24.2">
+<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
+<meta name="DC.date" content="2026-10-17">
+<meta name="DC.source" content="Lab06_notebook.m">
+<style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style>
+</head>
+<body>
+<div class="content">
+<h1>EECE 306 Lab 6 notebook. Electric Potential, the Gradient, and Path Independence</h1>
+<!--introduction-->
+<p>
+<b>Team 3: Amelia Harris, Carissa McWilliams, Mitch Nazareth.</b> TODO replace with your team number and member names.</p>
+<p>Fill in every TODO, run <tt>publish('Lab06_notebook.m')</tt> from the toolbox root, print the HTML to PDF, three to five pages.</p>
+<!--/introduction-->
+<h2>Contents</h2>
+<div>
+<ul>
+<li>
+<a href="#1">Setup</a>
+</li>
+<li>
+<a href="#2">Potential against the closed form</a>
+</li>
+<li>
+<a href="#3">E from the gradient, and the error map</a>
+</li>
+<li>
+<a href="#4">Choosing the step size, the V shaped curve</a>
+</li>
+<li>
+<a href="#5">The field is conservative, with a control</a>
+</li>
+<li>
+<a href="#6">Potential difference two ways</a>
+</li>
+<li>
+<a href="#7">Seeing the potential</a>
+</li>
+<li>
+<a href="#8">Interpretation</a>
+</li>
+<li>
+<a href="#9">Problems encountered</a>
+</li>
+<li>
+<a href="#10">Full test suite</a>
+</li>
+</ul>
+</div>
+<h2 id="1">Setup</h2>
+<pre class="codeinput">clear; close <span class="string">all</span>;
+e0 = em.const.eps0();
+Q  = 2e-9;
+s  = em.src.pointCharge(Q, [0 0 0]);
+FE = @(r) em.field.E(s, r);
+FV = @(r) em.field.V(s, r);
+</pre>
+<h2 id="2">Potential against the closed form</h2>
+<pre class="codeinput">radii = (1:10)';
+Vnum = em.field.V(s, [radii zeros(10,2)]);
+Vref = Q ./ (4.*pi.*e0.*radii);
+disp(<span class="string">'   r (m)    relative error'</span>)
+disp([radii abs(Vnum - Vref)./Vref])
+em.test.assertClose(Vnum, Vref, 1e6, <span class="string">'Potential against the closed form'</span>)
+</pre>
+<pre class="codeoutput">   r (m)    relative error
+    1.0000         0
+    2.0000         0
+    3.0000         0
+    4.0000         0
+    5.0000    0.0000
+    6.0000         0
+    7.0000         0
+    8.0000         0
+    9.0000         0
+   10.0000    0.0000
+
+</pre>
+<h2 id="3">E from the gradient, and the error map</h2>
+<p>E computed directly and E recovered as minus the gradient of V must agree away from the source.</p>
+<pre class="codeinput">[X, Y] = meshgrid(linspace(0.3, 2, 40), linspace(-1, 1, 40));
+P = [X(:) Y(:) zeros(numel(X),1)];
+Ed = em.field.E(s, P);
+Eg = -em.op.grad(FV, P);
+em.test.assertClose(Ed, Eg, 1e-6, [<span class="string">'Electric field from gradient and'</span> <span class="keyword">...</span>
+    <span class="string">'direct calculation'</span>])
+errmap = reshape(em.vec.mag(Ed - Eg) ./ em.vec.mag(Ed), size(X));
+figure; contourf(X, Y, log10(errmap), 20); colorbar
+xlabel(<span class="string">'x (m)'</span>); ylabel(<span class="string">'y (m)'</span>)
+title(<span class="string">'log10 relative error of E recovered from  -grad V'</span>)
+<span class="comment">% TODO one or two sentences on where the error is largest and why.</span>
+
+<span class="comment">% Error is largest near the edge of the region where the gradient</span>
+<span class="comment">% is calculated because the gradient is approximated using finite</span>
+<span class="comment">% difference. This creates relative error that gets bigger when</span>
+<span class="comment">% the electric field is smaller.</span>
+</pre>
+<img vspace="5" hspace="5" src="Lab06_notebook_01.png" alt=""> <h2 id="4">Choosing the step size, the V shaped curve</h2>
+<p>Truncation error falls as h squared, round off grows as 1 over h. The total has a minimum. Sweep h and find it for this machine.</p>
+<pre class="codeinput">p0 = [1 0.5 0];
+Eexact = em.field.E(s, p0);
+hs = logspace(-12, -1, 23)';
+errh = zeros(size(hs));
+<span class="keyword">for</span> k = 1:numel(hs)
+    Eh = -em.op.grad(FV, p0, hs(k));
+    errh(k) = em.vec.mag(Eh - Eexact) / em.vec.mag(Eexact);
+<span class="keyword">end</span>
+figure; loglog(hs, errh, <span class="string">'o-'</span>); grid <span class="string">on</span>
+xlabel(<span class="string">'step h (m)'</span>); ylabel(<span class="string">'relative error of  -grad V'</span>)
+title(<span class="string">'The two error sources compete, the total has a minimum'</span>)
+[emin, imin] = min(errh);
+fprintf(<span class="string">'best h on this machine about %.1e with error %.1e\n'</span>, hs(imin), emin);
+fprintf(<span class="string">'the API default h = 1e-5 sits on the flat bottom of this curve\n'</span>);
+</pre>
+<pre class="codeoutput">best h on this machine about 3.2e-06 with error 1.0e-11
+the API default h = 1e-5 sits on the flat bottom of this curve
+</pre>
+<img vspace="5" hspace="5" src="Lab06_notebook_02.png" alt=""> <h2 id="5">The field is conservative, with a control</h2>
+<pre class="codeinput">loops = { @(t)[2.*cos(t) 2.*sin(t) zeros(size(t))], <span class="keyword">...</span>
+          @(t)[1+0.5.*cos(t) 0.5*sin(3*t) 0.3.*sin(t)], <span class="keyword">...</span>
+          @(t)[0.5.*cos(t) 1+0.8.*sin(t) 0.2.*cos(2.*t)] };
+<span class="keyword">for</span> k = 1:3
+    C = em.field.circulation(FE, loops{k}, [0 2*pi], 400);
+    fprintf(<span class="string">'circulation of E on path %d = %.3e\n'</span>, k, C);
+<span class="keyword">end</span>
+Fnc = @(r) [-r(:,2) r(:,1) zeros(size(r,1),1)];
+Cnc = em.field.circulation(Fnc, loops{1}, [0 2*pi], 400);
+fprintf(<span class="string">'circulation of the control field = %.4f  (expect 8 pi, clearly nonzero)\n'</span>, Cnc);
+em.test.assertClose(Cnc, 8*pi, 1e-6, <span class="string">'Circulation test'</span>)
+<span class="comment">% The control matters. A test that only ever confirms zero cannot tell</span>
+<span class="comment">% correct code from code that always returns zero.</span>
+</pre>
+<pre class="codeoutput">circulation of E on path 1 = 8.299e-16
+circulation of E on path 2 = 4.611e-10
+circulation of E on path 3 = -4.675e-11
+circulation of the control field = 25.1327  (expect 8 pi, clearly nonzero)
+</pre>
+<h2 id="6">Potential difference two ways</h2>
+<pre class="codeinput">pa = [1 0 0]; pb = [0.3 0.4 0];
+dV = em.field.V(s, pb) - em.field.V(s, pa);
+seg = @(t) pa + t.*(pb - pa);
+work = -em.field.circulation(FE, seg, [0 1], 400);
+fprintf(<span class="string">'V(b) - V(a) from em.field.V        = %.6e V\n'</span>, dV);
+fprintf(<span class="string">'minus line integral of E, a to b   = %.6e V\n'</span>, work);
+</pre>
+<pre class="codeoutput">V(b) - V(a) from em.field.V        = 1.797510e+01 V
+minus line integral of E, a to b   = 1.797513e+01 V
+</pre>
+<h2 id="7">Seeing the potential</h2>
+<pre class="codeinput">figure;
+em.viz.contourV(@(r) em.field.V(s, r), [-2 2], [-2 2], 60, struct(<span class="string">'title'</span>, <span class="string">'Equipotentials of a point charge'</span>));
+hold <span class="string">on</span>
+em.viz.streamlines(FE, [-2 2], [-2 2], [cosd(0:45:315)' sind(0:45:315)' zeros(8,1)].*0.2, struct());
+title(<span class="string">'Equipotentials with field lines overlaid'</span>)
+</pre>
+<pre class="codeoutput">size(Vval) = [3600 1]
+min(Vval) = 6.35516
+max(Vval) = 374.954
+NaNs = 0
+Infs = 0
+</pre>
+<img vspace="5" hspace="5" src="Lab06_notebook_03.png" alt=""> <img vspace="5" hspace="5" src="Lab06_notebook_04.png" alt=""> <h2 id="8">Interpretation</h2>
+<p>TODO three to six sentences. State what the step size study implies for every later use of em.op.grad, and why driving h smaller is not safer.</p>
+<pre class="codeinput">
+<span class="comment">% The step size study implies that there is a size of h small enough to</span>
+<span class="comment">% ensure the best precision without worsening the error caused by</span>
+<span class="comment">% round-off. This error is caused by a loss in numerical precision</span>
+<span class="comment">% when calculating the difference between two very close</span>
+<span class="comment">% potential values. Driving h to be smaller is not always</span>
+<span class="comment">% safer because eventually the two numerical values become</span>
+<span class="comment">% close enough that the difference between them loses precision.</span>
+</pre>
+<h2 id="9">Problems encountered</h2>
+<p>TODO honest account, or NONE.</p>
+<pre class="codeinput">
+<span class="comment">% The midpoint quadrature and numerical derivative caused the relative</span>
+<span class="comment">% error to be larger than the expected relative error. Switching to Gauss's</span>
+<span class="comment">% equations resolved the issue. There were also issues with laying the</span>
+<span class="comment">% field lines over the quiver2 plot, and it was diffult to determine how</span>
+<span class="comment">% em.field.V would test if a source has an extent that grows with N. The</span>
+<span class="comment">% original notebook did not use element-wise multiplication in the function</span>
+<span class="comment">% handles.</span>
+</pre>
+<h2 id="10">Full test suite</h2>
+<pre class="codeinput">runTests
+</pre>
+<pre class="codeoutput">
+EECE 306 toolbox test suite
+--------------------------------------------------------------
+24.2.0.3212159 (R2024b) Update 9
+eps0 = 8.8541878128e-12 F/m
+mu0  = 1.2566370614e-06 H/m
+c0   = 2.9979245808e+08 m/s
+eta0 = 376.730314 ohm
+Derived constant checks passed.
+mag([3 4 0])  = 5   (expect 5 exactly)
+unit([3 4 0]) =
+    0.6000    0.8000         0
+
+unit([0 0 0]) (expect all NaN) =
+   NaN   NaN   NaN
+
+angle perpendicular = 1.5707963267949  (expect pi/2)
+angle antiparallel  = 3.14159265358979, real = 1  (expect pi, 1)
+fromTo([1 1 1],[2 3 4]) =
+     1     2     3
+
+mag    input 100x3 output [100 1]
+unit   input 100x3 output [100 3]
+angle  input 100x3 output [100 1]
+fromTo input 100x3 output [100 3]
+  PASS  test_lab01            0.51 s
+spherical   roundtrip max error = 6.357e-15
+cylindrical roundtrip max error = 2.979e-15
+c2sph([0 0 1])  =
+     1     0     0
+
+c2sph([0 0 -1]) =
+    1.0000    3.1416         0
+
+phi in the four quadrants = 0.7854 2.3562 3.9270 5.4978 rad
+all inside [0, 2*pi) = 1
+vector roundtrip (spherical pair) max error = 1.088e-15
+magnitude change under conversion max       = 8.882e-16
+vector roundtrip (cylindrical pair) max error = 6.280e-16
+at (0, 5, 0), (Ar, Atheta, Aphi) =
+    3.0000    0.0000   -2.0000
+
+at (4, 0, 0), (Ar, Atheta, Aphi) =
+    2.0000    0.0000    3.0000
+
+  PASS  test_lab02            0.28 s
+   r (m)    relative error
+    1.0000         0
+    2.0000         0
+    3.0000         0
+    4.0000         0
+    5.0000         0
+    6.0000         0
+    7.0000         0
+    8.0000         0
+    9.0000    0.0000
+   10.0000         0
+
+Minimum charge of positive charges = 7.463e-01 (should be greater than 0)
+Maximum charge of negative charges = -7.463e-01 (should be less than 0)
+max |Ex| on bisector      = 0.000e+00 V/m
+max |E| on the same plane = 5.061e+02 V/m
+element count after first merge = 2 (expect 2)
+Mismatch test passed: em.src.merge(q1, crnt_struct) successfully raised an error.
+|E(r)| / |E(2r)| = 8.0003   (expect near 8 for a dipole)
+Singularity test passed: em.field.E(q, [0 0 0]) successfully raised an error.
+em.field.E on 5000 points took 0.008 s  (requirement, under 2 s)
+Observation points: N = 10, Source Charges: M = 1, Product = 10, Time = 0.000 s
+Observation points: N = 100, Source Charges: M = 1, Product = 100, Time = 0.000 s
+Observation points: N = 1000, Source Charges: M = 1, Product = 1000, Time = 0.000 s
+Observation points: N = 10000, Source Charges: M = 1, Product = 10000, Time = 0.002 s
+Observation points: N = 100000, Source Charges: M = 1, Product = 100000, Time = 0.018 s
+Observation points: N = 1000000, Source Charges: M = 1, Product = 1000000, Time = 0.132 s
+Observation points: N = 10000000, Source Charges: M = 1, Product = 10000000, Time = 1.188 s
+Compution time surpasses time threshold at N=100000000 points: took 18.753 seconds
+  PASS  test_lab03           25.84 s
+circle length  6.283185   expect 6.283185
+sphere area    12.567806   expect 12.566371
+ball volume    4.187181   expect 4.188790
+square area    1.000000   expect 1.000000
+midpoint  observed order p = 2.00
+trapz     observed order p = 2.09
+simpson   observed order p = 4.00
+gauss N =  2   error = 3.855e-04
+gauss N =  4   error = 9.330e-10
+gauss N =  8   error = 6.661e-16
+gauss N = 16   error = 2.887e-15
+ratio first exceeds 0.99 at L/d about 19.3
+ratio first exceeds 0.99 at a/h about 59.8
+net charge of rho(z) = z on [-1, 1] = -0.000 C  (expect 0)
+  PASS  test_lab04            3.59 s
+flux through sphere   = 3.000000e-09 C
+enclosed charge       = 3.000000e-09 C
+relative error        = 4.175e-08 
+flux with charge outside = 0.000 C  (consistent with zero)
+sphere              3.000000e-09 C
+cube                3.000204e-09 C
+hemisphere and cap  3.000001e-09 C
+charge at x = 0.00   flux = 3.000000e-09 C
+charge at x = 0.15   flux = 3.000000e-09 C
+charge at x = 0.30   flux = 3.000000e-09 C
+Nu = 10   div D inside = 1.0163e-06   rho_v = 1.0000e-06   rel err = 1.63e-02
+Nu = 20   div D inside = 1.6814e-06   rho_v = 1.0000e-06   rel err = 6.81e-01
+Nu = 40   div D inside = 7.4061e-07   rho_v = 1.0000e-06   rel err = 2.59e-01
+div D in charge free space = 0.000  (consistent with zero)
+flux with swapped parameter order = -3.000000e-09 C  (sign flipped)
+  PASS  test_lab05            1.37 s
+   r (m)    relative error
+    1.0000         0
+    2.0000         0
+    3.0000         0
+    4.0000         0
+    5.0000    0.0000
+    6.0000         0
+    7.0000         0
+    8.0000         0
+    9.0000         0
+   10.0000    0.0000
+
+best h on this machine about 3.2e-06 with error 1.0e-11
+the API default h = 1e-5 sits on the flat bottom of this curve
+circulation of E on path 1 = 8.299e-16
+circulation of E on path 2 = 4.611e-10
+circulation of E on path 3 = -4.675e-11
+circulation of the control field = 25.1327  (expect 8 pi, clearly nonzero)
+V(b) - V(a) from em.field.V        = 1.797510e+01 V
+minus line integral of E, a to b   = 1.797513e+01 V
+size(Vval) = [3600 1]
+min(Vval) = 6.35516
+max(Vval) = 374.954
+NaNs = 0
+Infs = 0
+  PASS  test_lab06            0.97 s
+--------------------------------------------------------------
+  6 passed, 0 failed, 6 total
+  All tests passing.
+
+</pre>
+<img vspace="5" hspace="5" src="Lab06_notebook_05.png" alt=""> <img vspace="5" hspace="5" src="Lab06_notebook_06.png" alt=""> <img vspace="5" hspace="5" src="Lab06_notebook_07.png" alt=""> <img vspace="5" hspace="5" src="Lab06_notebook_08.png" alt=""> <p class="footer">
+<br>
+<a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2024b</a>
+<br>
+</p>
+</div>
+<!--
+##### SOURCE BEGIN #####
+%% EECE 306 Lab 6 notebook. Electric Potential, the Gradient, and Path Independence
+% *Team 3: Amelia Harris, Carissa McWilliams, Mitch Nazareth.* TODO replace with your team number and member names.
+%
+% Fill in every TODO, run |publish('Lab06_notebook.m')| from the toolbox
+% root, print the HTML to PDF, three to five pages.
+
+%% Setup
+clear; close all;
+e0 = em.const.eps0();
+Q  = 2e-9;
+s  = em.src.pointCharge(Q, [0 0 0]);
+FE = @(r) em.field.E(s, r);
+FV = @(r) em.field.V(s, r);
+
+%% Potential against the closed form
+radii = (1:10)';
+Vnum = em.field.V(s, [radii zeros(10,2)]);
+Vref = Q ./ (4.*pi.*e0.*radii);
+disp('   r (m)    relative error')
+disp([radii abs(Vnum - Vref)./Vref])
+em.test.assertClose(Vnum, Vref, 1e6, 'Potential against the closed form')
+
+%% E from the gradient, and the error map
+% E computed directly and E recovered as minus the gradient of V must
+% agree away from the source.
+[X, Y] = meshgrid(linspace(0.3, 2, 40), linspace(-1, 1, 40));
+P = [X(:) Y(:) zeros(numel(X),1)];
+Ed = em.field.E(s, P);
+Eg = -em.op.grad(FV, P);
+em.test.assertClose(Ed, Eg, 1e-6, ['Electric field from gradient and' ...
+    'direct calculation'])
+errmap = reshape(em.vec.mag(Ed - Eg) ./ em.vec.mag(Ed), size(X));
+figure; contourf(X, Y, log10(errmap), 20); colorbar
+xlabel('x (m)'); ylabel('y (m)')
+title('log10 relative error of E recovered from  -grad V')
+% TODO one or two sentences on where the error is largest and why.
+
+% Error is largest near the edge of the region where the gradient
+% is calculated because the gradient is approximated using finite
+% difference. This creates relative error that gets bigger when
+% the electric field is smaller.
+
+%% Choosing the step size, the V shaped curve
+% Truncation error falls as h squared, round off grows as 1 over h. The
+% total has a minimum. Sweep h and find it for this machine.
+p0 = [1 0.5 0];
+Eexact = em.field.E(s, p0);
+hs = logspace(-12, -1, 23)';
+errh = zeros(size(hs));
+for k = 1:numel(hs)
+    Eh = -em.op.grad(FV, p0, hs(k));
+    errh(k) = em.vec.mag(Eh - Eexact) / em.vec.mag(Eexact);
+end
+figure; loglog(hs, errh, 'o-'); grid on
+xlabel('step h (m)'); ylabel('relative error of  -grad V')
+title('The two error sources compete, the total has a minimum')
+[emin, imin] = min(errh);
+fprintf('best h on this machine about %.1e with error %.1e\n', hs(imin), emin);
+fprintf('the API default h = 1e-5 sits on the flat bottom of this curve\n');
+
+%% The field is conservative, with a control
+loops = { @(t)[2.*cos(t) 2.*sin(t) zeros(size(t))], ...
+          @(t)[1+0.5.*cos(t) 0.5*sin(3*t) 0.3.*sin(t)], ...
+          @(t)[0.5.*cos(t) 1+0.8.*sin(t) 0.2.*cos(2.*t)] };
+for k = 1:3
+    C = em.field.circulation(FE, loops{k}, [0 2*pi], 400);
+    fprintf('circulation of E on path %d = %.3e\n', k, C);
+end
+Fnc = @(r) [-r(:,2) r(:,1) zeros(size(r,1),1)];
+Cnc = em.field.circulation(Fnc, loops{1}, [0 2*pi], 400);
+fprintf('circulation of the control field = %.4f  (expect 8 pi, clearly nonzero)\n', Cnc);
+em.test.assertClose(Cnc, 8*pi, 1e-6, 'Circulation test')
+% The control matters. A test that only ever confirms zero cannot tell
+% correct code from code that always returns zero.
+
+%% Potential difference two ways
+pa = [1 0 0]; pb = [0.3 0.4 0];
+dV = em.field.V(s, pb) - em.field.V(s, pa);
+seg = @(t) pa + t.*(pb - pa);
+work = -em.field.circulation(FE, seg, [0 1], 400);
+fprintf('V(b) - V(a) from em.field.V        = %.6e V\n', dV);
+fprintf('minus line integral of E, a to b   = %.6e V\n', work);
+
+%% Seeing the potential
+figure;
+em.viz.contourV(@(r) em.field.V(s, r), [-2 2], [-2 2], 60, struct('title', 'Equipotentials of a point charge'));
+hold on
+em.viz.streamlines(FE, [-2 2], [-2 2], [cosd(0:45:315)' sind(0:45:315)' zeros(8,1)].*0.2, struct());
+title('Equipotentials with field lines overlaid')
+
+%% Interpretation
+% TODO three to six sentences. State what the step size study implies for
+% every later use of em.op.grad, and why driving h smaller is not safer.
+
+% The step size study implies that there is a size of h small enough to
+% ensure the best precision without worsening the error caused by
+% round-off. This error is caused by a loss in numerical precision
+% when calculating the difference between two very close
+% potential values. Driving h to be smaller is not always
+% safer because eventually the two numerical values become
+% close enough that the difference between them loses precision.
+
+%% Problems encountered
+% TODO honest account, or NONE.
+
+% The midpoint quadrature and numerical derivative caused the relative 
+% error to be larger than the expected relative error. Switching to Gauss's
+% equations resolved the issue. There were also issues with laying the 
+% field lines over the quiver2 plot, and it was diffult to determine how
+% em.field.V would test if a source has an extent that grows with N. The
+% original notebook did not use element-wise multiplication in the function
+% handles.
+
+%% Full test suite
+runTests
+
+##### SOURCE END #####
+-->
+</body>
+</html>

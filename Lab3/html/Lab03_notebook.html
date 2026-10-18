@@ -1,0 +1,466 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      -->
+<title>EECE 306 Lab 3 notebook. Point Charges, Superposition, and the Field Engine</title>
+<meta name="generator" content="MATLAB 24.2">
+<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
+<meta name="DC.date" content="2026-10-15">
+<meta name="DC.source" content="Lab03_notebook.m">
+<style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style>
+</head>
+<body>
+<div class="content">
+<h1>EECE 306 Lab 3 notebook. Point Charges, Superposition, and the Field Engine</h1>
+<!--introduction-->
+<p>
+<b>Team 3: Amelia Harris, Carissa McWilliams, and Mitch Nazareth.</b> TODO replace with your team number and member names.</p>
+<p>Fill in every TODO, run <tt>publish('Lab03_notebook.m')</tt> from the toolbox root, print the HTML to PDF, three to five pages.</p>
+<!--/introduction-->
+<h2>Contents</h2>
+<div>
+<ul>
+<li>
+<a href="#1">Setup</a>
+</li>
+<li>
+<a href="#2">Closed form comparison at ten radii</a>
+</li>
+<li>
+<a href="#3">Radial field direction</a>
+</li>
+<li>
+<a href="#4">Symmetry on the bisector plane</a>
+</li>
+<li>
+<a href="#5">Merge functionality</a>
+</li>
+<li>
+<a href="#6">Dipole far field</a>
+</li>
+<li>
+<a href="#7">The picture, raw and normalized</a>
+</li>
+<li>
+<a href="#8">Evaluating the field at the point charge</a>
+</li>
+<li>
+<a href="#9">Timing at N = 5000</a>
+</li>
+<li>
+<a href="#10">Field Engine Limits</a>
+</li>
+<li>
+<a href="#11">Test Output</a>
+</li>
+<li>
+<a href="#12">Interpretation</a>
+</li>
+<li>
+<a href="#13">Problems encountered</a>
+</li>
+</ul>
+</div>
+<h2 id="1">Setup</h2>
+<pre class="codeinput">clear; close <span class="string">all</span>;
+rng(306);
+e0 = em.const.eps0();
+</pre>
+<h2 id="2">Closed form comparison at ten radii</h2>
+<pre class="codeinput">Q = 2e-9;
+s = em.src.pointCharge(Q, [0 0 0]);
+radii = (1:10)';
+Enum  = em.field.E(s, [radii zeros(10,2)]);
+Eref  = Q ./ (4*pi*e0*radii.^2);
+relerr = abs(Enum(:,1) - Eref) ./ Eref;
+disp(<span class="string">'   r (m)    relative error'</span>)
+disp([radii relerr])
+</pre>
+<pre class="codeoutput">   r (m)    relative error
+    1.0000         0
+    2.0000         0
+    3.0000         0
+    4.0000         0
+    5.0000         0
+    6.0000         0
+    7.0000         0
+    8.0000         0
+    9.0000    0.0000
+   10.0000         0
+
+</pre>
+<h2 id="3">Radial field direction</h2>
+<p>E-field is proportional to the radial unit vector rhat, which points away from charge Q. Positive charge = outward; Negative charge = inward.</p>
+<pre class="codeinput">Qpos = em.src.pointCharge(1e-9, [0 0 0]);
+Qneg = em.src.pointCharge(-1e-9, [0 0 0]);
+pts_dir = randn(50, 3);
+Epos = em.field.E(Qpos, pts_dir);
+Eneg = em.field.E(Qneg, pts_dir);
+rhat = em.vec.unit(pts_dir);
+dot_pos = sum(Epos.* rhat, 2);
+dot_neg = sum(Eneg.* rhat, 2);
+fprintf([<span class="string">'Minimum charge of positive charges = %.3e (should be '</span> <span class="keyword">...</span>
+    <span class="string">'greater than 0)\n'</span>], min(dot_pos));
+fprintf([<span class="string">'Maximum charge of negative charges = %.3e (should be less '</span> <span class="keyword">...</span>
+    <span class="string">'than 0)\n'</span>], max(dot_neg));
+</pre>
+<pre class="codeoutput">Minimum charge of positive charges = 7.463e-01 (should be greater than 0)
+Maximum charge of negative charges = -7.463e-01 (should be less than 0)
+</pre>
+<h2 id="4">Symmetry on the bisector plane</h2>
+<p>Two equal charges on the x axis. On the plane x = 0 the x component must vanish.</p>
+<pre class="codeinput">q1 = em.src.pointCharge(1e-9, [-0.1 0 0]);
+q2 = em.src.pointCharge(1e-9, [ 0.1 0 0]);
+s2 = em.src.merge(q1, q2);
+pts = [zeros(200,1) randn(200,2)];
+Ev  = em.field.E(s2, pts);
+tol = 1e-6 * max(em.vec.mag(Ev));
+em.test.assertClose(max(abs(Ev(:,1))), 0, tol, <span class="string">'bisector symmetry'</span>);
+fprintf(<span class="string">'max |Ex| on bisector      = %.3e V/m\n'</span>, max(abs(Ev(:,1))));
+fprintf(<span class="string">'max |E| on the same plane = %.3e V/m\n'</span>, max(em.vec.mag(Ev)));
+<span class="comment">% TODO justify your absolute tolerance for the first number by comparing</span>
+<span class="comment">% it against the second. State the threshold you chose and why.</span>
+<span class="comment">%</span>
+<span class="comment">% The expected value of the x-component of the electric field will cancel</span>
+<span class="comment">% due to symmetry, so a relative comparison to the observed value would</span>
+<span class="comment">% give us division by zero. We instead consider the error negligible if the</span>
+<span class="comment">% difference between the observed and expected values is smaller than an</span>
+<span class="comment">% absolute tolerance. We choose a small tolerance (10^-6) that scales with</span>
+<span class="comment">% Ex instead of a fixed number to ensure precision with any magnitude of</span>
+<span class="comment">% charge.</span>
+</pre>
+<pre class="codeoutput">max |Ex| on bisector      = 0.000e+00 V/m
+max |E| on the same plane = 5.061e+02 V/m
+</pre>
+<h2 id="5">Merge functionality</h2>
+<p>Merge function should concatenate element list for any number of sources</p>
+<pre class="codeinput">sum_count1 = em.src.merge(q1, q2);
+fprintf(<span class="string">'element count after first merge = %d (expect 2)\n'</span>, <span class="keyword">...</span>
+    size(sum_count1.pos, 1))
+<span class="comment">% Merge function should return error when a charge source is merged with a</span>
+<span class="comment">% current source.</span>
+crnt_struct = struct(<span class="string">'type'</span>, <span class="string">'current'</span>, <span class="string">'pos'</span>, [0 0 0], <span class="string">'I'</span>, 1);
+<span class="keyword">try</span>
+    try_merge = em.src.merge(q1, crnt_struct);
+    fprintf(<span class="string">'Mismatch test failed: merge(s1, crnt_struct) failed to raise an error.\n'</span>);
+<span class="keyword">catch</span>
+    fprintf(<span class="string">'Mismatch test passed: merge(s1, crnt_struct) successfully raised an error.\n'</span>)
+<span class="keyword">end</span>
+</pre>
+<pre class="codeoutput">element count after first merge = 2 (expect 2)
+Mismatch test passed: merge(s1, crnt_struct) successfully raised an error.
+</pre>
+<h2 id="6">Dipole far field</h2>
+<pre class="codeinput">sd = em.src.merge(em.src.pointCharge(1e-9,[0 0 0.05]), <span class="keyword">...</span>
+    em.src.pointCharge(-1e-9,[0 0 -0.05]));
+E1 = em.vec.mag(em.field.E(sd, [0 0 10]));
+E2 = em.vec.mag(em.field.E(sd, [0 0 20]));
+fprintf(<span class="string">'|E(r)| / |E(2r)| = %.4f   (expect near 8 for a dipole)\n'</span>, E1/E2);
+</pre>
+<pre class="codeoutput">|E(r)| / |E(2r)| = 8.0003   (expect near 8 for a dipole)
+</pre>
+<h2 id="7">The picture, raw and normalized</h2>
+<pre class="codeinput">figure;
+em.viz.quiver2(@(r) em.field.E(s2, r), [-0.5 0.5], [-0.5 0.5], 15, <span class="keyword">...</span>
+    struct(<span class="string">'normalize'</span>, false, <span class="string">'title'</span>, <span class="string">'Two equal charges, raw magnitudes'</span>));
+figure;
+em.viz.quiver2(@(r) em.field.E(s2, r), [-0.5 0.5], [-0.5 0.5], 15, <span class="keyword">...</span>
+    struct(<span class="string">'normalize'</span>, true, <span class="string">'title'</span>, <span class="string">'Two equal charges, direction only'</span>));
+<span class="comment">% TODO one or two sentences on why the raw plot is unreadable and what</span>
+<span class="comment">% information the normalized plot gives up in exchange.</span>
+
+<span class="comment">% The raw plot is unreadable because the magnitude of the electric field</span>
+<span class="comment">% lines near the charge is so large that the rest of the lines "disappear".</span>
+<span class="comment">% Normalizing the plot makes it easier to see the complete field, but the</span>
+<span class="comment">% intensity of the field lines at each point is lost as a result.</span>
+</pre>
+<h2 id="8">Evaluating the field at the point charge</h2>
+<pre class="codeinput">
+<span class="keyword">try</span>
+    Einf = em.field.E(q, [0 0 0]);
+    fprintf(<span class="string">'Singularity test failed: em.field.E(q, [0 0 0]) failed to raise an error.\n'</span>)
+<span class="keyword">catch</span>
+    fprintf(<span class="string">'Singularity test passed: em.field.E(q, [0 0 0]) successfully raised an error.\n'</span>)
+<span class="keyword">end</span>
+</pre>
+<h2 id="9">Timing at N = 5000</h2>
+<pre class="codeinput">pts5k = randn(5000,3) + 5;
+tic; em.field.E(s2, pts5k); t = toc;
+fprintf(<span class="string">'em.field.E on 5000 points took %.3f s  (requirement, under 2 s)\n'</span>, t);
+</pre>
+<pre class="codeoutput">em.field.E on 5000 points took 0.004 s  (requirement, under 2 s)
+</pre>
+<h2 id="10">Field Engine Limits</h2>
+<pre class="codeinput">s = em.src.pointCharge(1, [0 0 0]);
+sec_max = 5.0;
+<span class="keyword">for</span> N = [1e3 2e3 5e3 1e4 2e4 5e4]
+    r = randn(N, 3);
+    tic
+    Ev = em.field.E(s, r);
+    t = toc;
+    <span class="keyword">if</span> t &gt; sec_max
+        error(<span class="string">'ERROR: Compution time surpasses time threshold at N=%d points: took %.3f seconds\n'</span>, N, t)
+    <span class="keyword">end</span>
+    fprintf(<span class="string">'Observation points: N = %d, Source Charges: M = %d, Product = %d, Time = %.3f s\n'</span>, N, size(s.pos, 1), N*size(s.pos, 1), t)
+<span class="keyword">end</span>
+</pre>
+<pre class="codeoutput">Observation points: N = 1000, Source Charges: M = 1, Product = 1000, Time = 0.001 s
+Observation points: N = 2000, Source Charges: M = 1, Product = 2000, Time = 0.001 s
+Observation points: N = 5000, Source Charges: M = 1, Product = 5000, Time = 0.001 s
+Observation points: N = 10000, Source Charges: M = 1, Product = 10000, Time = 0.001 s
+Observation points: N = 20000, Source Charges: M = 1, Product = 20000, Time = 0.003 s
+Observation points: N = 50000, Source Charges: M = 1, Product = 50000, Time = 0.008 s
+</pre>
+<h2 id="11">Test Output</h2>
+<pre>PASS  test_lab03            3.66 s
+--------------------------------------------------------------
+1 passed, 0 failed, 1 total
+All tests passing.</pre>
+<h2 id="12">Interpretation</h2>
+<p>TODO three to six sentences. Three tests were run above, closed form, symmetry, and a scaling law. Say what each one can catch that the other two cannot.</p>
+<pre class="codeinput">
+<span class="comment">% The closed form test determines if the electric field of a singular point</span>
+<span class="comment">% charge is precise to a relative tolerance. This test is good at catching</span>
+<span class="comment">% gross (large) errors in magnitude, but it misses subtle rounding errors.</span>
+<span class="comment">% The symmetry test determines if the fields of equal and opposite charges</span>
+<span class="comment">% cancel along the bisector. Using an absolute tolerance that scales with</span>
+<span class="comment">% the max E-field in that direction catches the subtle errors, but can</span>
+<span class="comment">% still pass even if the field is the wrong magnitude. The scaling law</span>
+<span class="comment">% checks if a dipole's far-field magnitude falls off as 1/r^3, using the</span>
+<span class="comment">% ratio of field at r and 2r. Since this ratio is sensitive to small</span>
+<span class="comment">% differences and doesn't rely on a closed form or exact symmetry, this</span>
+<span class="comment">% test is accurate up to a certain limit.</span>
+</pre>
+<h2 id="13">Problems encountered</h2>
+<p>TODO honest account, or NONE. We had to backtrack to Labs 1 and 2 to correct errors in our code. Some of our function returned vectors with incorrect sizes. Despite this, our tests still passed when run, which made the errors easy to miss. We also made a GitHub repository with version control to keep track of our data.</p>
+<p class="footer">
+<br>
+<a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2024b</a>
+<br>
+</p>
+</div>
+<!--
+##### SOURCE BEGIN #####
+%% EECE 306 Lab 3 notebook. Point Charges, Superposition, and the Field Engine
+% *Team 3: Amelia Harris, Carissa McWilliams, and Mitch Nazareth.* 
+% TODO replace with your team number and member names.
+%
+% Fill in every TODO, run |publish('Lab03_notebook.m')| from the toolbox
+% root, print the HTML to PDF, three to five pages.
+
+%% Setup
+clear; close all;
+rng(306);
+e0 = em.const.eps0();
+
+%% Closed form comparison at ten radii
+Q = 2e-9;
+s = em.src.pointCharge(Q, [0 0 0]);
+radii = (1:10)';
+Enum  = em.field.E(s, [radii zeros(10,2)]);
+Eref  = Q ./ (4*pi*e0*radii.^2);
+relerr = abs(Enum(:,1) - Eref) ./ Eref;
+disp('   r (m)    relative error')
+disp([radii relerr])
+
+%% Radial field direction
+% E-field is proportional to the radial unit vector rhat, which points away
+% from charge Q. Positive charge = outward; Negative charge = inward.
+Qpos = em.src.pointCharge(1e-9, [0 0 0]);
+Qneg = em.src.pointCharge(-1e-9, [0 0 0]);
+pts_dir = randn(50, 3);
+Epos = em.field.E(Qpos, pts_dir);
+Eneg = em.field.E(Qneg, pts_dir);
+rhat = em.vec.unit(pts_dir);
+dot_pos = sum(Epos.* rhat, 2);
+dot_neg = sum(Eneg.* rhat, 2);
+fprintf(['Minimum charge of positive charges = %.3e (should be ' ...
+    'greater than 0)\n'], min(dot_pos));
+fprintf(['Maximum charge of negative charges = %.3e (should be less ' ...
+    'than 0)\n'], max(dot_neg));
+
+%% Symmetry on the bisector plane
+% Two equal charges on the x axis. On the plane x = 0 the x component
+% must vanish.
+q1 = em.src.pointCharge(1e-9, [-0.1 0 0]);
+q2 = em.src.pointCharge(1e-9, [ 0.1 0 0]);
+s2 = em.src.merge(q1, q2);
+pts = [zeros(200,1) randn(200,2)];
+Ev  = em.field.E(s2, pts);
+tol = 1e-6 * max(em.vec.mag(Ev)); 
+em.test.assertClose(max(abs(Ev(:,1))), 0, tol, 'bisector symmetry');
+fprintf('max |Ex| on bisector      = %.3e V/m\n', max(abs(Ev(:,1))));
+fprintf('max |E| on the same plane = %.3e V/m\n', max(em.vec.mag(Ev)));
+% TODO justify your absolute tolerance for the first number by comparing
+% it against the second. State the threshold you chose and why.
+%
+% The expected value of the x-component of the electric field will cancel
+% due to symmetry, so a relative comparison to the observed value would
+% give us division by zero. We instead consider the error negligible if the
+% difference between the observed and expected values is smaller than an
+% absolute tolerance. We choose a small tolerance (10^-6) that scales with
+% Ex instead of a fixed number to ensure precision with any magnitude of
+% charge.
+
+%% Merge functionality
+% Merge function should concatenate element list for any number of sources
+sum_count1 = em.src.merge(q1, q2);
+fprintf('element count after first merge = %d (expect 2)\n', ...
+    size(sum_count1.pos, 1))
+% Merge function should return error when a charge source is merged with a
+% current source.
+crnt_struct = struct('type', 'current', 'pos', [0 0 0], 'I', 1);
+try
+    try_merge = em.src.merge(q1, crnt_struct);
+    fprintf('Mismatch test failed: merge(s1, crnt_struct) failed to raise an error.\n');
+catch
+    fprintf('Mismatch test passed: merge(s1, crnt_struct) successfully raised an error.\n')
+end
+
+%% Dipole far field
+sd = em.src.merge(em.src.pointCharge(1e-9,[0 0 0.05]), ...
+    em.src.pointCharge(-1e-9,[0 0 -0.05]));
+E1 = em.vec.mag(em.field.E(sd, [0 0 10]));
+E2 = em.vec.mag(em.field.E(sd, [0 0 20]));
+fprintf('|E(r)| / |E(2r)| = %.4f   (expect near 8 for a dipole)\n', E1/E2);
+
+%% The picture, raw and normalized
+figure;
+em.viz.quiver2(@(r) em.field.E(s2, r), [-0.5 0.5], [-0.5 0.5], 15, ...
+    struct('normalize', false, 'title', 'Two equal charges, raw magnitudes'));
+figure;
+em.viz.quiver2(@(r) em.field.E(s2, r), [-0.5 0.5], [-0.5 0.5], 15, ...
+    struct('normalize', true, 'title', 'Two equal charges, direction only'));
+% TODO one or two sentences on why the raw plot is unreadable and what
+% information the normalized plot gives up in exchange.
+
+% The raw plot is unreadable because the magnitude of the electric field
+% lines near the charge is so large that the rest of the lines "disappear".
+% Normalizing the plot makes it easier to see the complete field, but the
+% intensity of the field lines at each point is lost as a result.
+
+%% Evaluating the field at the point charge
+try
+    Einf = em.field.E(q, [0 0 0]);
+    fprintf('Singularity test failed: em.field.E(q, [0 0 0]) failed to raise an error.\n')
+catch
+    fprintf('Singularity test passed: em.field.E(q, [0 0 0]) successfully raised an error.\n')
+end
+
+%% Timing at N = 5000
+pts5k = randn(5000,3) + 5;
+tic; em.field.E(s2, pts5k); t = toc;
+fprintf('em.field.E on 5000 points took %.3f s  (requirement, under 2 s)\n', t);
+
+%% Field Engine Limits
+s = em.src.pointCharge(1, [0 0 0]);
+sec_max = 5.0;
+for N = [1e3 2e3 5e3 1e4 2e4 5e4]
+    r = randn(N, 3);
+    tic
+    Ev = em.field.E(s, r);
+    t = toc;
+    if t > sec_max
+        error('ERROR: Compution time surpasses time threshold at N=%d points: took %.3f seconds\n', N, t)
+    end
+    fprintf('Observation points: N = %d, Source Charges: M = %d, Product = %d, Time = %.3f s\n', N, size(s.pos, 1), N*size(s.pos, 1), t)
+end
+%% Test Output
+%  PASS  test_lab03            3.66 s
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%  1 passed, 0 failed, 1 total
+%  All tests passing.
+
+%% Interpretation
+% TODO three to six sentences. Three tests were run above, closed form,
+% symmetry, and a scaling law. Say what each one can catch that the other
+% two cannot.
+
+% The closed form test determines if the electric field of a singular point
+% charge is precise to a relative tolerance. This test is good at catching 
+% gross (large) errors in magnitude, but it misses subtle rounding errors.
+% The symmetry test determines if the fields of equal and opposite charges 
+% cancel along the bisector. Using an absolute tolerance that scales with 
+% the max E-field in that direction catches the subtle errors, but can 
+% still pass even if the field is the wrong magnitude. The scaling law
+% checks if a dipole's far-field magnitude falls off as 1/r^3, using the 
+% ratio of field at r and 2r. Since this ratio is sensitive to small
+% differences and doesn't rely on a closed form or exact symmetry, this
+% test is accurate up to a certain limit.
+
+%% Problems encountered
+% TODO honest account, or NONE.
+% We had to backtrack to Labs 1 and 2 to correct errors in our code. Some
+% of our function returned vectors with incorrect sizes. Despite this, our
+% tests still passed when run, which made the errors easy to miss. We also
+% made a GitHub repository with version control to keep track of our data.
+
+##### SOURCE END #####
+-->
+</body>
+</html>

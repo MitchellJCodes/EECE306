@@ -1,0 +1,533 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      -->
+<title>EECE 306 Lab 5 notebook. Flux, Gauss's Law, and the Divergence</title>
+<meta name="generator" content="MATLAB 24.2">
+<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
+<meta name="DC.date" content="2026-10-17">
+<meta name="DC.source" content="Lab05_notebook.m">
+<style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style>
+</head>
+<body>
+<div class="content">
+<h1>EECE 306 Lab 5 notebook. Flux, Gauss's Law, and the Divergence</h1>
+<!--introduction-->
+<p>
+<b>Team 3: Amelia Harris, Carissa McWilliams, and Mitch Nazareth.</b> TODO replace with your team number and member names.</p>
+<p>Fill in every TODO, run <tt>publish('Lab05_notebook.m')</tt> from the toolbox root, print the HTML to PDF, three to five pages.</p>
+<!--/introduction-->
+<h2>Contents</h2>
+<div>
+<ul>
+<li>
+<a href="#1">Setup</a>
+</li>
+<li>
+<a href="#2">Gauss's law on the sphere</a>
+</li>
+<li>
+<a href="#3">The same charge outside the surface</a>
+</li>
+<li>
+<a href="#4">Three surfaces, one answer</a>
+</li>
+<li>
+<a href="#5">Independence of the charge position inside</a>
+</li>
+<li>
+<a href="#6">Divergence against the density, an element count study</a>
+</li>
+<li>
+<a href="#7">Orientation is a convention you must own</a>
+</li>
+<li>
+<a href="#8">Interpretation</a>
+</li>
+<li>
+<a href="#9">Problems encountered</a>
+</li>
+<li>
+<a href="#10">Full test suite</a>
+</li>
+</ul>
+</div>
+<h2 id="1">Setup</h2>
+<pre class="codeinput">clear; close <span class="string">all</span>;
+Q = 3e-9;
+</pre>
+<h2 id="2">Gauss's law on the sphere</h2>
+<pre class="codeinput">s = em.src.pointCharge(Q, [0 0 0]);
+FD = @(r) em.field.D(s, r);
+sphR = @(th,ph) 0.5*[sin(th).*cos(ph) sin(th).*sin(ph) cos(th)];
+Phi = em.field.flux(FD, sphR, [0 pi], [0 2*pi], 60, 120, <span class="string">'simpson'</span>);
+fprintf(<span class="string">'flux through sphere   = %.6e C\n'</span>, Phi);
+fprintf(<span class="string">'enclosed charge       = %.6e C\n'</span>, Q);
+fprintf(<span class="string">'relative error        = %.3e \n'</span>, abs(Phi - Q)/Q);
+em.test.assertClose(Phi, Q, 1e-6, <span class="string">'Flux through the sphere'</span>)
+</pre>
+<pre class="codeoutput">flux through sphere   = 3.000000e-09 C
+enclosed charge       = 3.000000e-09 C
+relative error        = 4.175e-08 
+</pre>
+<h2 id="3">The same charge outside the surface</h2>
+<pre class="codeinput">sout = em.src.pointCharge(Q, [5 0 0]);
+Phi0 = em.field.flux(@(r) em.field.D(sout, r), sphR, [0 pi], [0 2*pi], <span class="keyword">...</span>
+    60, 120, <span class="string">'simpson'</span>);
+fprintf(<span class="string">'flux with charge outside = %.3f C  (consistent with zero)\n'</span>, <span class="keyword">...</span>
+    Phi0);
+em.test.assertClose(Phi0, 0, 1e-6, [<span class="string">'Zero flux '</span> <span class="keyword">...</span>
+    <span class="string">'through sphere with outside charge'</span>])
+<span class="comment">% TODO justify the absolute tolerance you would use to call this zero.</span>
+<span class="comment">% Compare it against the flux each hemisphere carries separately.</span>
+
+<span class="comment">% Similarly to the symmetry test of the field engine, the expected value of</span>
+<span class="comment">% the flux is meant to be 0, so calculating the relative error would cause</span>
+<span class="comment">% a divsion by 0 error or a result of Inf. Using an absolute tolerance that</span>
+<span class="comment">% is not too strict (1e-6) ensures good precision. No matter what, the flux</span>
+<span class="comment">% of separate hemispheres adds to the flux of the entire sphere, so adding</span>
+<span class="comment">% them together should not change the flux much if at all.</span>
+</pre>
+<pre class="codeoutput">flux with charge outside = 0.000 C  (consistent with zero)
+</pre>
+<h2 id="4">Three surfaces, one answer</h2>
+<p>The same charge, placed off center inside all three closed surfaces.</p>
+<pre class="codeinput">s3  = em.src.pointCharge(Q, [0 0.05 0.1]);
+FD3 = @(r) em.field.D(s3, r);
+PhiSph = em.field.flux(FD3, sphR, [0 pi], [0 2*pi], 60, 120, <span class="string">'simpson'</span>);
+cube = 0;
+faces = { @(u,v)[u v  0.5.*ones(size(u))], @(u,v)[v u -0.5.*ones(size(u))], <span class="keyword">...</span>
+          @(u,v)[v  0.5.*ones(size(u)) u], @(u,v)[u -0.5.*ones(size(u)) v], <span class="keyword">...</span>
+          @(u,v)[ 0.5.*ones(size(u)) u v], @(u,v)[-0.5.*ones(size(u)) v u] };
+<span class="keyword">for</span> k = 1:6
+    cube = cube + em.field.flux(FD3, faces{k}, [-0.5 0.5], [-0.5 0.5], 60, 60);
+<span class="keyword">end</span>
+hemi = @(th,ph) 0.5.*[sin(th).*cos(ph) sin(th).*sin(ph) cos(th)];
+capD = @(u,v) [u.*cos(v) -u.*sin(v) zeros(size(u))];
+PhiHemi = em.field.flux(FD3, hemi, [0 pi/2], [0 2*pi], 60, 120, <span class="string">'simpson'</span>) <span class="keyword">...</span>
+        + em.field.flux(FD3, capD, [0 0.5], [0 2*pi], 60, 120, <span class="string">'simpson'</span>);
+fprintf(<span class="string">'sphere              %.6e C\n'</span>, PhiSph);
+fprintf(<span class="string">'cube                %.6e C\n'</span>, cube);
+fprintf(<span class="string">'hemisphere and cap  %.6e C\n'</span>, PhiHemi);
+em.test.assertClose(PhiSph, Q, 1e-4, <span class="string">'Flux through the off-center sphere'</span>)
+em.test.assertClose(cube, Q, 1e-4, <span class="string">'Flux through the off-center cube'</span>)
+em.test.assertClose(PhiHemi, Q, 1e-4, <span class="string">'Flux through the off-center hemi-disk'</span>)
+<span class="comment">% TODO which surface was hardest to set up correctly and why. Face</span>
+<span class="comment">% orientation is the usual culprit, state how each outward normal was</span>
+<span class="comment">% checked.</span>
+
+<span class="comment">% The cube was the hardest surface because it has six individual faces</span>
+<span class="comment">% rather than a smooth surface. Setting up the correct orientation of each</span>
+<span class="comment">% face required comparing the direction of the parameter cross product with</span>
+<span class="comment">% the outward normal direction.</span>
+</pre>
+<pre class="codeoutput">sphere              3.000000e-09 C
+cube                3.000204e-09 C
+hemisphere and cap  3.000001e-09 C
+</pre>
+<h2 id="5">Independence of the charge position inside</h2>
+<pre class="codeinput">
+<span class="keyword">for</span> x0 = [0 0.15 0.3]
+    sm = em.src.pointCharge(Q, [x0 0.1 0]);
+    Pm = em.field.flux(@(r) em.field.D(sm, r), sphR, [0 pi], [0 2*pi], <span class="keyword">...</span>
+        60, 120, <span class="string">'simpson'</span>);
+    fprintf(<span class="string">'charge at x = %.2f   flux = %.6e C\n'</span>, x0, Pm);
+    em.test.assertClose(Pm, Q, 1e-6, <span class="string">'Flux at charge position'</span>)
+<span class="keyword">end</span>
+</pre>
+<pre class="codeoutput">charge at x = 0.00   flux = 3.000000e-09 C
+charge at x = 0.15   flux = 3.000000e-09 C
+charge at x = 0.30   flux = 3.000000e-09 C
+</pre>
+<h2 id="6">Divergence against the density, an element count study</h2>
+<p>A uniform ball of charge. The derivative step h must average over many elements, so h = 0.05 m is passed explicitly, and the element count is raised at fixed h.</p>
+<pre class="codeinput">rhov = 1e-6;
+hdiv = 0.05;
+<span class="keyword">for</span> Nu = [10 20 40]
+    ball = @(u,v,w)[w.*sin(u).*cos(v) w.*sin(u).*sin(v) w.*cos(u)];
+    sb = em.src.volCharge(rhov, ball, [0 pi], [0 2*pi], [0 0.5], <span class="keyword">...</span>
+        Nu, 2.*Nu, Nu, <span class="string">'simpson'</span>);
+    dv = em.op.div(@(r) em.field.D(sb, r), [0.1 0.05 0.1], hdiv);
+    rel_error = abs(rhov - dv);
+    <span class="keyword">if</span> rel_error &gt; 0.05
+        error(<span class="string">'ERROR: Relative error falls outside of tolerance.'</span>)
+    <span class="keyword">end</span>
+    fprintf([<span class="string">'Nu = %2d   div D inside = %.4e   rho_v = %.4e   '</span> <span class="keyword">...</span>
+        <span class="string">'rel err = %.2e\n'</span>], Nu, dv, rhov, abs(dv - rhov)/rhov);
+<span class="keyword">end</span>
+dfree = em.op.div(FD, [2 1 1], hdiv);
+fprintf(<span class="string">'div D in charge free space = %.3f  (consistent with zero)\n'</span>, dfree);
+em.test.assertClose(dfree, 0, 1e-6, <span class="string">'Divergence in charge free space'</span>)
+<span class="comment">% TODO one or two sentences. Why must h span many source elements here,</span>
+<span class="comment">% and what would div D return with h far smaller than the element spacing.</span>
+
+<span class="comment">% h spans across so many source elements here so the finite difference</span>
+<span class="comment">% calculation can see the overall continuous charge distribution. If</span>
+<span class="comment">% h is much smaller than the element spacing the calculated divergence</span>
+<span class="comment">% will be inaccurate because it will be affected by the individual</span>
+<span class="comment">% source elements.</span>
+</pre>
+<pre class="codeoutput">Nu = 10   div D inside = 1.0163e-06   rho_v = 1.0000e-06   rel err = 1.63e-02
+Nu = 20   div D inside = 1.6814e-06   rho_v = 1.0000e-06   rel err = 6.81e-01
+Nu = 40   div D inside = 7.4061e-07   rho_v = 1.0000e-06   rel err = 2.59e-01
+div D in charge free space = 0.000  (consistent with zero)
+</pre>
+<h2 id="7">Orientation is a convention you must own</h2>
+<pre class="codeinput">sphFlip = @(ph,th) 0.5.*[sin(th).*cos(ph) sin(th).*sin(ph) cos(th)];
+PhiFlip = em.field.flux(FD, sphFlip, [0 2*pi], [0 pi], 120, 60, <span class="string">'simpson'</span>);
+fprintf(<span class="string">'flux with swapped parameter order = %.6e C  (sign flipped)\n'</span>, PhiFlip);
+em.test.assertClose(PhiFlip, -Q, 1e-4, <span class="string">'Flux of swapped parameter order'</span>)
+</pre>
+<pre class="codeoutput">flux with swapped parameter order = -3.000000e-09 C  (sign flipped)
+</pre>
+<h2 id="8">Interpretation</h2>
+<p>TODO three to six sentences. Gauss's law was verified without knowing any closed form for the flux integral. Explain why this class of test remains available on a problem with no known answer.</p>
+<pre class="codeinput">
+<span class="comment">% Gauss's law gives us a relationship between total flux and the charge</span>
+<span class="comment">% enclosed by the surface. We can calculate the flux without knowing</span>
+<span class="comment">% the exact analytical value of the integral. We then compare the result</span>
+<span class="comment">% to the known enclosed charge. This lets us test if the implementation</span>
+<span class="comment">% is working correctly even if the integral does not have a known closed</span>
+<span class="comment">% form solution.</span>
+</pre>
+<h2 id="9">Problems encountered</h2>
+<p>TODO honest account, or NONE.</p>
+<pre class="codeinput">
+<span class="comment">%We had to fix a bug in +em+/+quad/vol.m where the function did not accept</span>
+<span class="comment">% the quadrature rule argument. Also, the Jacobian wasn't being calculated</span>
+<span class="comment">% correctly so that the weights represented the physical volume. Sine and</span>
+<span class="comment">% cosine multiplication was not element wise, which caused many bugs. We</span>
+<span class="comment">% had to use the Simpson rule to achieve the desired accuracy of most of</span>
+<span class="comment">% the calculations.</span>
+</pre>
+<h2 id="10">Full test suite</h2>
+<pre class="codeinput">runTests
+</pre>
+<pre class="codeoutput">
+EECE 306 toolbox test suite
+--------------------------------------------------------------
+24.2.0.3212159 (R2024b) Update 9
+eps0 = 8.8541878128e-12 F/m
+mu0  = 1.2566370614e-06 H/m
+c0   = 2.9979245808e+08 m/s
+eta0 = 376.730314 ohm
+Derived constant checks passed.
+mag([3 4 0])  = 5   (expect 5 exactly)
+unit([3 4 0]) =
+    0.6000    0.8000         0
+
+unit([0 0 0]) (expect all NaN) =
+   NaN   NaN   NaN
+
+angle perpendicular = 1.5707963267949  (expect pi/2)
+angle antiparallel  = 3.14159265358979, real = 1  (expect pi, 1)
+fromTo([1 1 1],[2 3 4]) =
+     1     2     3
+
+mag    input 100x3 output [100 1]
+unit   input 100x3 output [100 3]
+angle  input 100x3 output [100 1]
+fromTo input 100x3 output [100 3]
+  PASS  test_lab01            0.06 s
+spherical   roundtrip max error = 6.357e-15
+cylindrical roundtrip max error = 2.979e-15
+c2sph([0 0 1])  =
+     1     0     0
+
+c2sph([0 0 -1]) =
+    1.0000    3.1416         0
+
+phi in the four quadrants = 0.7854 2.3562 3.9270 5.4978 rad
+all inside [0, 2*pi) = 1
+vector roundtrip (spherical pair) max error = 1.088e-15
+magnitude change under conversion max       = 8.882e-16
+vector roundtrip (cylindrical pair) max error = 6.280e-16
+at (0, 5, 0), (Ar, Atheta, Aphi) =
+    3.0000    0.0000   -2.0000
+
+at (4, 0, 0), (Ar, Atheta, Aphi) =
+    2.0000    0.0000    3.0000
+
+  PASS  test_lab02            0.08 s
+   r (m)    relative error
+    1.0000         0
+    2.0000         0
+    3.0000         0
+    4.0000         0
+    5.0000         0
+    6.0000         0
+    7.0000         0
+    8.0000         0
+    9.0000    0.0000
+   10.0000         0
+
+Minimum charge of positive charges = 7.463e-01 (should be greater than 0)
+Maximum charge of negative charges = -7.463e-01 (should be less than 0)
+max |Ex| on bisector      = 0.000e+00 V/m
+max |E| on the same plane = 5.061e+02 V/m
+element count after first merge = 2 (expect 2)
+Mismatch test passed: em.src.merge(q1, crnt_struct) successfully raised an error.
+|E(r)| / |E(2r)| = 8.0003   (expect near 8 for a dipole)
+Singularity test passed: em.field.E(q, [0 0 0]) successfully raised an error.
+em.field.E on 5000 points took 0.003 s  (requirement, under 2 s)
+Observation points: N = 10, Source Charges: M = 1, Product = 10, Time = 0.000 s
+Observation points: N = 100, Source Charges: M = 1, Product = 100, Time = 0.000 s
+Observation points: N = 1000, Source Charges: M = 1, Product = 1000, Time = 0.000 s
+Observation points: N = 10000, Source Charges: M = 1, Product = 10000, Time = 0.001 s
+Observation points: N = 100000, Source Charges: M = 1, Product = 100000, Time = 0.013 s
+Observation points: N = 1000000, Source Charges: M = 1, Product = 1000000, Time = 0.138 s
+Observation points: N = 10000000, Source Charges: M = 1, Product = 10000000, Time = 1.269 s
+Compution time surpasses time threshold at N=100000000 points: took 14.037 seconds
+  PASS  test_lab03           21.06 s
+circle length  6.283185   expect 6.283185
+sphere area    12.567806   expect 12.566371
+ball volume    4.187181   expect 4.188790
+square area    1.000000   expect 1.000000
+midpoint  observed order p = 2.00
+trapz     observed order p = 2.09
+simpson   observed order p = 4.00
+gauss N =  2   error = 3.855e-04
+gauss N =  4   error = 9.330e-10
+gauss N =  8   error = 6.661e-16
+gauss N = 16   error = 2.887e-15
+ratio first exceeds 0.99 at L/d about 19.3
+ratio first exceeds 0.99 at a/h about 59.8
+net charge of rho(z) = z on [-1, 1] = -0.000 C  (expect 0)
+  PASS  test_lab04            3.34 s
+flux through sphere   = 3.000000e-09 C
+enclosed charge       = 3.000000e-09 C
+relative error        = 4.175e-08 
+flux with charge outside = 0.000 C  (consistent with zero)
+sphere              3.000000e-09 C
+cube                3.000204e-09 C
+hemisphere and cap  3.000001e-09 C
+charge at x = 0.00   flux = 3.000000e-09 C
+charge at x = 0.15   flux = 3.000000e-09 C
+charge at x = 0.30   flux = 3.000000e-09 C
+Nu = 10   div D inside = 1.0163e-06   rho_v = 1.0000e-06   rel err = 1.63e-02
+Nu = 20   div D inside = 1.6814e-06   rho_v = 1.0000e-06   rel err = 6.81e-01
+Nu = 40   div D inside = 7.4061e-07   rho_v = 1.0000e-06   rel err = 2.59e-01
+div D in charge free space = 0.000  (consistent with zero)
+flux with swapped parameter order = -3.000000e-09 C  (sign flipped)
+  PASS  test_lab05            1.52 s
+--------------------------------------------------------------
+  5 passed, 0 failed, 5 total
+  All tests passing.
+
+</pre>
+<p class="footer">
+<br>
+<a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2024b</a>
+<br>
+</p>
+</div>
+<!--
+##### SOURCE BEGIN #####
+%% EECE 306 Lab 5 notebook. Flux, Gauss's Law, and the Divergence
+% *Team 3: Amelia Harris, Carissa McWilliams, and Mitch Nazareth.* TODO replace with your team number and member names.
+%
+% Fill in every TODO, run |publish('Lab05_notebook.m')| from the toolbox
+% root, print the HTML to PDF, three to five pages.
+
+%% Setup
+clear; close all;
+Q = 3e-9;
+
+%% Gauss's law on the sphere
+s = em.src.pointCharge(Q, [0 0 0]);
+FD = @(r) em.field.D(s, r);
+sphR = @(th,ph) 0.5*[sin(th).*cos(ph) sin(th).*sin(ph) cos(th)];
+Phi = em.field.flux(FD, sphR, [0 pi], [0 2*pi], 60, 120, 'simpson');
+fprintf('flux through sphere   = %.6e C\n', Phi);
+fprintf('enclosed charge       = %.6e C\n', Q);
+fprintf('relative error        = %.3e \n', abs(Phi - Q)/Q);
+em.test.assertClose(Phi, Q, 1e-6, 'Flux through the sphere')
+
+%% The same charge outside the surface
+sout = em.src.pointCharge(Q, [5 0 0]);
+Phi0 = em.field.flux(@(r) em.field.D(sout, r), sphR, [0 pi], [0 2*pi], ...
+    60, 120, 'simpson');
+fprintf('flux with charge outside = %.3f C  (consistent with zero)\n', ...
+    Phi0);
+em.test.assertClose(Phi0, 0, 1e-6, ['Zero flux ' ...
+    'through sphere with outside charge'])
+% TODO justify the absolute tolerance you would use to call this zero.
+% Compare it against the flux each hemisphere carries separately.
+
+% Similarly to the symmetry test of the field engine, the expected value of
+% the flux is meant to be 0, so calculating the relative error would cause
+% a divsion by 0 error or a result of Inf. Using an absolute tolerance that
+% is not too strict (1e-6) ensures good precision. No matter what, the flux
+% of separate hemispheres adds to the flux of the entire sphere, so adding
+% them together should not change the flux much if at all.
+
+%% Three surfaces, one answer
+% The same charge, placed off center inside all three closed surfaces.
+s3  = em.src.pointCharge(Q, [0 0.05 0.1]);
+FD3 = @(r) em.field.D(s3, r);
+PhiSph = em.field.flux(FD3, sphR, [0 pi], [0 2*pi], 60, 120, 'simpson');
+cube = 0;
+faces = { @(u,v)[u v  0.5.*ones(size(u))], @(u,v)[v u -0.5.*ones(size(u))], ...
+          @(u,v)[v  0.5.*ones(size(u)) u], @(u,v)[u -0.5.*ones(size(u)) v], ...
+          @(u,v)[ 0.5.*ones(size(u)) u v], @(u,v)[-0.5.*ones(size(u)) v u] };
+for k = 1:6
+    cube = cube + em.field.flux(FD3, faces{k}, [-0.5 0.5], [-0.5 0.5], 60, 60);
+end
+hemi = @(th,ph) 0.5.*[sin(th).*cos(ph) sin(th).*sin(ph) cos(th)];
+capD = @(u,v) [u.*cos(v) -u.*sin(v) zeros(size(u))];
+PhiHemi = em.field.flux(FD3, hemi, [0 pi/2], [0 2*pi], 60, 120, 'simpson') ...
+        + em.field.flux(FD3, capD, [0 0.5], [0 2*pi], 60, 120, 'simpson');
+fprintf('sphere              %.6e C\n', PhiSph);
+fprintf('cube                %.6e C\n', cube);
+fprintf('hemisphere and cap  %.6e C\n', PhiHemi);
+em.test.assertClose(PhiSph, Q, 1e-4, 'Flux through the off-center sphere')
+em.test.assertClose(cube, Q, 1e-4, 'Flux through the off-center cube')
+em.test.assertClose(PhiHemi, Q, 1e-4, 'Flux through the off-center hemi-disk')
+% TODO which surface was hardest to set up correctly and why. Face
+% orientation is the usual culprit, state how each outward normal was
+% checked.
+
+% The cube was the hardest surface because it has six individual faces 
+% rather than a smooth surface. Setting up the correct orientation of each 
+% face required comparing the direction of the parameter cross product with 
+% the outward normal direction.
+
+%% Independence of the charge position inside
+for x0 = [0 0.15 0.3]
+    sm = em.src.pointCharge(Q, [x0 0.1 0]);
+    Pm = em.field.flux(@(r) em.field.D(sm, r), sphR, [0 pi], [0 2*pi], ...
+        60, 120, 'simpson');
+    fprintf('charge at x = %.2f   flux = %.6e C\n', x0, Pm);
+    em.test.assertClose(Pm, Q, 1e-6, 'Flux at charge position')
+end
+
+%% Divergence against the density, an element count study
+% A uniform ball of charge. The derivative step h must average over many
+% elements, so h = 0.05 m is passed explicitly, and the element count is
+% raised at fixed h.
+rhov = 1e-6;
+hdiv = 0.05;
+for Nu = [10 20 40]
+    ball = @(u,v,w)[w.*sin(u).*cos(v) w.*sin(u).*sin(v) w.*cos(u)];
+    sb = em.src.volCharge(rhov, ball, [0 pi], [0 2*pi], [0 0.5], ...
+        Nu, 2.*Nu, Nu, 'simpson');
+    dv = em.op.div(@(r) em.field.D(sb, r), [0.1 0.05 0.1], hdiv);
+    rel_error = abs(rhov - dv);
+    if rel_error > 0.05
+        error('ERROR: Relative error falls outside of tolerance.')
+    end
+    fprintf(['Nu = %2d   div D inside = %.4e   rho_v = %.4e   ' ...
+        'rel err = %.2e\n'], Nu, dv, rhov, abs(dv - rhov)/rhov);
+end
+dfree = em.op.div(FD, [2 1 1], hdiv);
+fprintf('div D in charge free space = %.3f  (consistent with zero)\n', dfree);
+em.test.assertClose(dfree, 0, 1e-6, 'Divergence in charge free space')
+% TODO one or two sentences. Why must h span many source elements here,
+% and what would div D return with h far smaller than the element spacing.
+
+% h spans across so many source elements here so the finite difference
+% calculation can see the overall continuous charge distribution. If
+% h is much smaller than the element spacing the calculated divergence
+% will be inaccurate because it will be affected by the individual
+% source elements.
+
+%% Orientation is a convention you must own
+sphFlip = @(ph,th) 0.5.*[sin(th).*cos(ph) sin(th).*sin(ph) cos(th)];
+PhiFlip = em.field.flux(FD, sphFlip, [0 2*pi], [0 pi], 120, 60, 'simpson');
+fprintf('flux with swapped parameter order = %.6e C  (sign flipped)\n', PhiFlip);
+em.test.assertClose(PhiFlip, -Q, 1e-4, 'Flux of swapped parameter order')
+
+%% Interpretation
+% TODO three to six sentences. Gauss's law was verified without knowing
+% any closed form for the flux integral. Explain why this class of test
+% remains available on a problem with no known answer.
+
+% Gauss's law gives us a relationship between total flux and the charge
+% enclosed by the surface. We can calculate the flux without knowing
+% the exact analytical value of the integral. We then compare the result
+% to the known enclosed charge. This lets us test if the implementation
+% is working correctly even if the integral does not have a known closed
+% form solution.
+
+%% Problems encountered
+% TODO honest account, or NONE.
+%We had to fix a bug in +em+/+quad/vol.m where the function did not accept 
+% the quadrature rule argument. Also, the Jacobian wasn't being calculated 
+% correctly so that the weights represented the physical volume. Sine and
+% cosine multiplication was not element wise, which caused many bugs. We
+% had to use the Simpson rule to achieve the desired accuracy of most of
+% the calculations.
+
+
+%% Full test suite
+runTests
+
+##### SOURCE END #####
+-->
+</body>
+</html>
