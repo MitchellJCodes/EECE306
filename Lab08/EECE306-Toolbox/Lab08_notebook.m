@@ -1,6 +1,5 @@
 %% EECE 306 Lab 8 notebook. Dielectrics, Boundary Conditions, and Capacitance
-% *Team NN.* TODO replace with your team number and member names.
-%
+% *Team 03 — Carissa McWilliams, Amelia Harris, and Mitch Nazareth.*
 % Milestone week. The graded deliverable is the formal report, which
 % replaces the weekly notebook. This script generates every
 % number and figure of the validation ladder so the report can cite
