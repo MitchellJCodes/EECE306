@@ -11,7 +11,7 @@ A Octave toolbox for EECE 306, Fundamentals of Electromagnetics Lab.
 - `+em/+src/` — discretized charge/current source constructors and source merging.
 - `+em/+field/` — electric field, potential, electric flux density, flux, and circulation.
 - `+em/+op/` — numerical gradient, divergence, curl, and Laplacian operators as implemented.
-- `+em/+solve/` — reserved for boundary-value solvers specified by the course API.
+- `+em/+solve/` — Cartesian grid construction and a 2-D variable-permittivity Poisson solver with harmonic (default) or arithmetic face averaging.
 - `+em/+viz/` — vector-field and scalar-potential plotting helpers.
 - `+em/+test/` — assertion and numerical-convergence verification helpers.
 - `tests/` — lab-specific regression checks (`test_lab01.m` through the latest included lab test).
@@ -39,5 +39,4 @@ and warnings.
 
 ## Current status
 
-The toolbox is still incomplete, and the toolbox should not be seen as functional until each test is validating as passed with Octave.
-Currently working on Lab08.
+Lab08 tests are passing along with the previous lab tests. Lab06 tests are giving warnings reguarding the assumption that the electric potential is zero at infinity.
