@@ -45,4 +45,4 @@ and warnings.
 
 ## Current status
 
-Completed lab09 implementation, the notebook still needs to be completed.
+Implemented magnetic field H.m and completed Lab09.
