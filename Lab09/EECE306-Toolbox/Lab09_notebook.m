@@ -9,11 +9,10 @@ clear; close all;
 
 %% How long em.field.H took
 % em.field.H is the same loop as em.field.E with a different numerator.
-minutes_for_H = NaN;   % TODO replace with the actual number of minutes
-% TODO three to six sentences. How long did em.field.H take, what had to
-% change in the Lab 3 engine, and what would have made it faster. Two
-% hours with a clear diagnosis earns more credit than fifteen minutes
-% with nothing to say.
+minutes_for_H = 70;
+% The biggest challenge was taking the structure from em.field.E and changing it to calculate the magnetic field using the Biot-Savart law. I had to make sure the cross product was handled correctly and that the current source elements and their tangent vectors were being used properly. I also had to make sure the function worked with multiple observation points and handled points where the field calculation could become singular. Reusing the source and integration code from the previous labs helped save a lot of time. I think this would have gone faster if the current source structure and tangent vector calculations had already been set up.
+
+
 
 %% Circular loop against the closed form
 a = 1; I = 1;
@@ -88,12 +87,10 @@ tic; em.field.H(sr, pts); t = toc;
 fprintf('em.field.H on 5000 points took %.3f s  (requirement, under 2 s)\n', t);
 
 %% Interpretation
-% TODO three to six sentences. State which Lab 3 and Lab 4 design
-% decisions made em.field.H short to write, and what that implies for
-% the next interface you design.
+% Lab 3 made this lab easier because the field engine was already set up to calculate fields at multiple observation points. Lab 4 also helped since I could reuse the source structures and numerical integration methods instead of starting over. Most of the work for em.field.H was changing the calculation to use the Biot-Savart law rather than having to build a completely new field engine. Going forward, I would try to design interfaces so they can be reused for different types of sources and field calculations. This would make adding new features easier and avoid having to rewrite code that already works.
 
 %% Problems encountered
-% TODO honest account, or NONE.
+% None.
 
 %% Full test suite
 runTests
