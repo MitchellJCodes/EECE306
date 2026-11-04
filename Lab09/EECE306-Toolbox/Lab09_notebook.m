@@ -1,5 +1,5 @@
 %% EECE 306 Lab 9 notebook. Current Sources and the Biot-Savart Law
-% *Team NN.* TODO replace with your team number and member names.
+% *Team 03 — Carissa McWilliams, Amelia Harris, and Mitch Nazareth.*
 %
 % Fill in every TODO, run |publish('Lab09_notebook.m')| from the toolbox
 % root, print the HTML to PDF, three to five pages.
