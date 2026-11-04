@@ -40,3 +40,13 @@ and warnings.
 ## Current status
 
 Starting work on Lab09
+
+
+## Lab 9 magnetostatics additions
+
+- `em.src.lineCurrent` and `em.src.surfCurrent` create discretized current sources.
+- `em.field.H` evaluates the Biot-Savart field intensity; `em.field.B` returns
+  `mu0*mur*H` (with `mur=1` by default).
+- `em.quad.line` now has an optional third output, the parameter tangent `dr/dt`;
+  its existing two-output interface is unchanged.
+- Run `octave runTests.m` from this directory to include `test_lab09.m`.

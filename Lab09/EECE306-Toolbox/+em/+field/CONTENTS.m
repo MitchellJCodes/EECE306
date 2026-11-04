@@ -4,3 +4,6 @@
 % V.m            Electric potential (zero reference at infinity for finite sources).
 % flux.m         Flux of a vector field through a parametrized surface.
 % circulation.m  Line integral of a vector field along a parametrized curve.
+
+% H.m            Magnetic field intensity from a discretized current source.
+% B.m            Magnetic flux density with optional relative permeability.

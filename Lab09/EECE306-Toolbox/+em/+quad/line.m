@@ -1,4 +1,4 @@
-function [pos,w] = line(curve,interval,N,rule)
+function [pos,w,drdt] = line(curve,interval,N,rule)
 % em.quad.line
 % Quadrature of a parametrized curve
 %
@@ -10,6 +10,7 @@ function [pos,w] = line(curve,interval,N,rule)
 % Returns:
 % pos - N-by-3 positions
 % w - N-by-1 physical line-length weights
+% drdt - N-by-3 parameter tangent dr/dt (optional third output)
 
     if nargin < 4 || isempty(rule)
         rule = 'midpoint';
