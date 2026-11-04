@@ -96,7 +96,7 @@ fprintf('em.field.H on 5000 points took %.3f s  (requirement, under 2 s)\n', t);
 % Lab 3 made this lab easier because the field engine was already set up to calculate fields at multiple observation points. Lab 4 also helped since I could reuse the source structures and numerical integration methods instead of starting over. Most of the work for em.field.H was changing the calculation to use the Biot-Savart law rather than having to build a completely new field engine. Going forward, I would try to design interfaces so they can be reused for different types of sources and field calculations. This would make adding new features easier and avoid having to rewrite code that already works.
 
 %% Problems encountered
-% None.
+% None, this lab went smoothly.
 
 %% Full test suite
 runTests
