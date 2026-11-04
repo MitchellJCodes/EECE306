@@ -1,8 +1,5 @@
 %% EECE 306 Lab 9 notebook. Current Sources and the Biot-Savart Law
 % *Team 03 — Carissa McWilliams, Amelia Harris, and Mitch Nazareth.*
-%
-% Fill in every TODO, run |publish('Lab09_notebook.m')| from the toolbox
-% root, print the HTML to PDF, three to five pages.
 
 %% Setup
 clear; close all;
@@ -10,7 +7,16 @@ clear; close all;
 %% How long em.field.H took
 % em.field.H is the same loop as em.field.E with a different numerator.
 minutes_for_H = 70;
-% The biggest challenge was taking the structure from em.field.E and changing it to calculate the magnetic field using the Biot-Savart law. I had to make sure the cross product was handled correctly and that the current source elements and their tangent vectors were being used properly. I also had to make sure the function worked with multiple observation points and handled points where the field calculation could become singular. Reusing the source and integration code from the previous labs helped save a lot of time. I think this would have gone faster if the current source structure and tangent vector calculations had already been set up.
+% The biggest challenge was taking the structure from em.field.E and
+% changing it to calculate the magnetic field using the Biot-Savart law.
+% I had to make sure the cross product was handled correctly and that
+% the current source elements and their tangent vectors were being used
+% properly. I also had to make sure the function worked with multiple
+% observation points and handled points where the field calculation
+% could become singular. Reusing the source and integration code from
+% the previous labs helped save a lot of time. I think this would have
+% gone faster if the current source structure and tangent vector
+% calculations had already been set up.
 
 
 
