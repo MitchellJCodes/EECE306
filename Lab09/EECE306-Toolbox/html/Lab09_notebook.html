@@ -193,12 +193,12 @@ merging current with charge correctly threw. Cannot merge a current source with 
 tic; em.field.H(sr, pts); t = toc;
 fprintf(<span class="string">'em.field.H on 5000 points took %.3f s  (requirement, under 2 s)\n'</span>, t);</pre>
 
-<pre class="oct-code-output">em.field.H on 5000 points took 0.434 s  (requirement, under 2 s)
+<pre class="oct-code-output">em.field.H on 5000 points took 0.621 s  (requirement, under 2 s)
 </pre>
 <h2><a id="node8">Interpretation</a></h2>
 <p>Lab 3 made this lab easier because the field engine was already set up to calculate fields at multiple observation points. Lab 4 also helped since I could reuse the source structures and numerical integration methods instead of starting over. Most of the work for em.field.H was changing the calculation to use the Biot-Savart law rather than having to build a completely new field engine. Going forward, I would try to design interfaces so they can be reused for different types of sources and field calculations. This would make adding new features easier and avoid having to rewrite code that already works.</p>
 <h2><a id="node9">Problems encountered</a></h2>
-<p>None.</p>
+<p>None, this lab went smoothly.</p>
 <h2><a id="node10">Full test suite</a></h2>
 <pre class="oct-code">runTests</pre>
 
@@ -256,12 +256,12 @@ max |Ex| on bisector      = 0.000e+00 V/m
 max |E| on the same plane = 6.298e+02 V/m
 |E(r)| / |E(2r)| = 8.0003   (expect near 8 for a dipole)
 em.field.E on 5000 points took 0.001 s  (requirement, under 2 s)
-  PASS  test_lab03            0.33 s
+  PASS  test_lab03            0.28 s
   test_lab04 checks complete
-  PASS  test_lab04            0.40 s
+  PASS  test_lab04            0.33 s
 div D = 1.003980e-06, rho_v = 1.000000e-06
   test_lab05 checks complete
-  PASS  test_lab05            0.46 s
+  PASS  test_lab05            0.37 s
 warning: The represented source extent is at least 50 times the median nearest-element distance for these observation points. Check finite extent; V = 0 at infinity is not valid for an ideal unbounded source.
 warning: called from
     V at line 51 column 9
@@ -283,16 +283,16 @@ warning: called from
     publish at line 402 column 5
  
   test_lab06 checks complete
-  PASS  test_lab06            1.39 s
+  PASS  test_lab06            1.57 s
   Lab 7 MMS error 8.224e-05; observed order 2.055; Gauss-law relative error 0.000
   test_lab07 checks complete
-  PASS  test_lab07           81.18 s
+  PASS  test_lab07           73.75 s
   Lab 8 parallel-plate rel err 1.82e-16; two-layer harmonic order unresolved (aligned 1-D case); arithmetic order 0.983; coax rel err 0.0149
   test_lab08 checks complete
-  PASS  test_lab08            5.04 s
-  Lab 9 loop center Hz 2.875 A/m; wire ratio 0.99228 at h/rho=8.0; solenoid ratio 0.99123 at h/a=15.0; 5000-point H 0.038 s
+  PASS  test_lab08            4.62 s
+  Lab 9 loop center Hz 2.875 A/m; wire ratio 0.99228 at h/rho=8.0; solenoid ratio 0.99123 at h/a=15.0; 5000-point H 0.024 s
   test_lab09 checks complete
-  PASS  test_lab09            0.20 s
+  PASS  test_lab09            0.11 s
 --------------------------------------------------------------
   9 passed, 0 failed, 9 total
   All tests passing.
@@ -403,7 +403,7 @@ fprintf('em.field.H on 5000 points took %.3f s  (requirement, under 2 s)\n', t);
 % Lab 3 made this lab easier because the field engine was already set up to calculate fields at multiple observation points. Lab 4 also helped since I could reuse the source structures and numerical integration methods instead of starting over. Most of the work for em.field.H was changing the calculation to use the Biot-Savart law rather than having to build a completely new field engine. Going forward, I would try to design interfaces so they can be reused for different types of sources and field calculations. This would make adding new features easier and avoid having to rewrite code that already works.
 
 %% Problems encountered
-% None.
+% None, this lab went smoothly.
 
 %% Full test suite
 runTests
