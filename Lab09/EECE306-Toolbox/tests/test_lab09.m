@@ -1,12 +1,12 @@
 function test_09 = test_lab09()
-%TEST_LAB09 Magnetostatic source and Biot-Savart verification.
+%TEST_LAB09 Magnetostatic source & Biot-Savart
 
 mu0 = em.const.mu0();
 I = 2.3;
 a = 0.4;
 circle = @(t) [a*cos(t), a*sin(t), zeros(size(t))];
 
-%% Circular loop: closed-form axial field and symmetry
+%% Circular loop
 loop = em.src.lineCurrent(I,circle,[0 2*pi],128,'gauss');
 zvals = linspace(-1.2,1.2,10)';
 rax = [zeros(size(zvals)),zeros(size(zvals)),zvals];
@@ -22,7 +22,7 @@ transverse = Hax(:,1:2);
 assert(max(abs(transverse(:))) < 1e-11, ...
     'Transverse magnetic-field components should vanish on loop axis');
 
-%% Magnetic flux density is mu0*mur times H
+%% Magnetic flux density
 Btest = em.field.B(loop,[0 0 0],2.5);
 em.test.assertClose(Btest,2.5*mu0*Hcenter,1e-12, ...
     'B = mu0*mur*H');
@@ -39,7 +39,7 @@ assert(wireRatio > 0.99, ...
     sprintf('Finite-wire ratio %.6f does not exceed 0.99 at h/rho=%.3f', ...
     wireRatio,h/rho));
 
-%% Finite solenoid: center field reaches 99 percent of NI/h
+%% Finite solenoid
 Nturns = 100;
 asol = 0.2;
 hsol = 15*asol;
@@ -57,7 +57,7 @@ assert(solRatio >= 0.99, ...
     sprintf('Solenoid center ratio %.6f is below 0.99 at h/a=%.3f', ...
     solRatio,hsol/asol));
 
-%% Current reversal and linearity, componentwise
+%% Current reversal and linearity
 Hforward = em.field.H(loop,[0.17 -0.11 0.31]);
 loopReverse = em.src.lineCurrent(-I,circle,[0 2*pi],128,'gauss');
 Hreverse = em.field.H(loopReverse,[0.17 -0.11 0.31]);
@@ -92,13 +92,13 @@ catch
 end
 assert(mixedRejected,'Merging current and charge sources must raise an error');
 
-%% Quadrature tangent is available without changing two-output callers
+%% Quadrature tangent
 [pos,w,tangent] = em.quad.line(circle,[0 2*pi],32,'gauss');
 assert(isequal(size(pos),[32 3]) && isequal(size(w),[32 1]) && ...
     isequal(size(tangent),[32 3]), ...
     'em.quad.line must return positions, weights, and tangent');
 
-%% Vectorization/performance requirement
+%% Vectorization/performance
 perfSource = em.src.lineCurrent(I,circle,[0 2*pi],96,'gauss');
 obs = [linspace(-0.8,0.8,5000)',0.7*ones(5000,1),0.5*ones(5000,1)];
 tic;

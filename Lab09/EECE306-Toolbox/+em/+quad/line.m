@@ -19,21 +19,16 @@ function [pos,w,drdt] = line(curve,interval,N,rule)
     a = interval(1);
     b = interval(2);
 
-    % Use midpoint quadrature for the parameter
+    % Midpoint
     [t,wt] = em.quad.nodes(a,b,N,rule);
 
-    % Evaluate curve
+    % Curve
     pos = curve(t);
     
-    % Make sure positions are N-by-3
+    % Positions N-by-3
     pos = reshape(pos,[],3);
 
     % Numerical derivative dr/dt
-    % Five-point centered difference
-    %
-    % f'(t) ~= [f(t-2h)-8f(t-h)+8f(t+h)-f(t+2h)]/(12h)
-    %
-    % h chosen to balance truncation and roundoff
     h = eps^(1/5) .* (1 + abs(t));
 
     rm2 = curve(t - 2*h);
@@ -48,14 +43,8 @@ function [pos,w,drdt] = line(curve,interval,N,rule)
 
     drdt = (rm2 - 8*rm1 + 8*rp1 - rp2) ./ (12*h);
 
-    % Speed |dr/dt|
     speed = sqrt(sum(drdt.^2,2));
 
-    % Physical line element
-    % ds = |dr/dt| dt
-    %
-    % abs(wt) makes geometric length positive even if the
-    % parameter interval is supplied backwards
     w = abs(wt).*speed;
 
     w = w(:);

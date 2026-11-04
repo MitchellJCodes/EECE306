@@ -1,6 +1,5 @@
 function H_r = H(s,r)
-%H Magnetic field intensity from a discretized current source (A/m).
-%   H(r) = (1/(4*pi))*sum_i cross(Idl_i,r-r_i)/|r-r_i|^3.
+%H Magnetic field intensity
 if ~isstruct(s) || ~isfield(s,'type') || ~strcmp(s.type,'current') || ...
         ~isfield(s,'pos') || ~isfield(s,'Idl')
     error('em.field.H:InvalidSource', ...
@@ -18,7 +17,7 @@ if M == 0
     H_r = zeros(N,3);
     return
 end
-% Vectorize over observation points and source elements.
+% Vectorize over observation points and source elements
 ro = reshape(r,[],1,3);
 ri = reshape(s.pos,1,[],3);
 R = ro - ri;
