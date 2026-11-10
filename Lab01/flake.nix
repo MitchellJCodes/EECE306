@@ -7,18 +7,29 @@
 
   outputs = { self, nixpkgs }:
     let
-      system = "x86_64-linux";
+      systems = [
+        "x86_64-linux"
+        "aarch64-linux"
+        "x86_64-darwin"
+        "aarch64-darwin"
+      ];
 
-      pkgs = import nixpkgs {
-        inherit system;
-      };
+      forAllSystems = nixpkgs.lib.genAttrs systems;
     in {
-      devShells.${system}.default = pkgs.mkShell {
-        packages = with pkgs; [
-          octaveFull
-          ghostscript
-          qt6.qtbase
-        ];
-      };
+      devShells = forAllSystems (system:
+        let
+          pkgs = import nixpkgs {
+            inherit system;
+          };
+        in {
+          default = pkgs.mkShell {
+            packages = with pkgs; [
+              octaveFull
+              ghostscript
+              graphicsmagick
+              qt6.qtbase
+            ];
+          };
+        });
     };
 }
