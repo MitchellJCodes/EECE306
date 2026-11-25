@@ -1,0 +1,277 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      -->
+<title>Lab02_notebook</title>
+<meta name="generator" content="MATLAB 25.1">
+<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
+<meta name="DC.date" content="2026-09-02">
+<meta name="DC.source" content="Lab02_notebook.m">
+<style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style>
+</head>
+<body>
+<div class="content">
+<h2>Contents</h2>
+<div>
+<ul>
+<li>
+<a href="#1">EECE 306 Lab 2 notebook. Coordinate Systems, Points and Vector Components</a>
+</li>
+<li>
+<a href="#2">Setup</a>
+</li>
+<li>
+<a href="#3">Point roundtrips, 1000 random points</a>
+</li>
+<li>
+<a href="#4">Poles and the phi convention</a>
+</li>
+<li>
+<a href="#5">Vector component roundtrips and the invariant</a>
+</li>
+<li>
+<a href="#6">The two position demonstration</a>
+</li>
+<li>
+<a href="#7">Interpretation</a>
+</li>
+<li>
+<a href="#8">Problems encountered</a>
+</li>
+<li>
+<a href="#9">Full test suite</a>
+</li>
+</ul>
+</div>
+<h2 id="1">EECE 306 Lab 2 notebook. Coordinate Systems, Points and Vector Components</h2>
+<p>
+<b>Team 3.</b> Carissa McWilliams and Ameila Harris</p>
+<pre class="codeinput">
+<span class="comment">% Fill in every TODO, run |publish('Lab02_notebook.m')| from the toolbox</span>
+<span class="comment">% root, print the HTML to PDF, three to five pages.</span>
+</pre>
+<h2 id="2">Setup</h2>
+<pre class="codeinput">clear; close <span class="string">all</span>;
+rng(306);
+</pre>
+<h2 id="3">Point roundtrips, 1000 random points</h2>
+<pre class="codeinput">r = randn(1000,3);
+esph = max(em.vec.mag(em.coord.sph2c(em.coord.c2sph(r)) - r));
+ecyl = max(em.vec.mag(em.coord.cyl2c(em.coord.c2cyl(r)) - r));
+fprintf(<span class="string">'spherical   roundtrip max error = %.3e\n'</span>, esph);
+fprintf(<span class="string">'cylindrical roundtrip max error = %.3e\n'</span>, ecyl);
+</pre>
+<pre class="codeoutput">spherical   roundtrip max error = 6.357e-15
+cylindrical roundtrip max error = 2.979e-15
+</pre>
+<h2 id="4">Poles and the phi convention</h2>
+<pre class="codeinput">disp(<span class="string">'c2sph([0 0 1])  ='</span>); disp(em.coord.c2sph([0 0 1]))
+disp(<span class="string">'c2sph([0 0 -1]) ='</span>); disp(em.coord.c2sph([0 0 -1]))
+q = [ 1 1 0; -1 1 0; -1 -1 0; 1 -1 0 ];
+p = em.coord.c2cyl(q);
+fprintf(<span class="string">'phi in the four quadrants = %.4f %.4f %.4f %.4f rad\n'</span>, p(:,2));
+fprintf(<span class="string">'all inside [0, 2*pi) = %d\n'</span>, all(p(:,2) &gt;= 0 &amp; p(:,2) &lt; 2*pi));
+</pre>
+<pre class="codeoutput">c2sph([0 0 1])  =
+     1     0     0
+
+c2sph([0 0 -1]) =
+    1.0000    3.1416         0
+
+phi in the four quadrants = 0.7854 2.3562 3.9270 5.4978 rad
+all inside [0, 2*pi) = 1
+</pre>
+<h2 id="5">Vector component roundtrips and the invariant</h2>
+<pre class="codeinput">A  = randn(1000,3);
+As = em.coord.vecC2Sph(A, r);
+ev = max(em.vec.mag(em.coord.vecSph2C(As, r) - A));
+em_ = max(abs(em.vec.mag(As) - em.vec.mag(A)));
+fprintf(<span class="string">'vector roundtrip (spherical pair) max error = %.3e\n'</span>, ev);
+fprintf(<span class="string">'magnitude change under conversion max       = %.3e\n'</span>, em_);
+Ac = em.coord.vecC2Cyl(A, r);
+ev2 = max(em.vec.mag(em.coord.vecCyl2C(Ac, r) - A));
+fprintf(<span class="string">'vector roundtrip (cylindrical pair) max error = %.3e\n'</span>, ev2);
+</pre>
+<pre class="codeoutput">vector roundtrip (spherical pair) max error = 1.088e-15
+magnitude change under conversion max       = 8.882e-16
+vector roundtrip (cylindrical pair) max error = 6.280e-16
+</pre>
+<h2 id="6">The two position demonstration</h2>
+<p>The same Cartesian vector A = 2x + 3y, expressed in spherical components at two different positions.</p>
+<pre class="codeinput">A0 = [2 3 0];
+disp(<span class="string">'at (0, 5, 0), (Ar, Atheta, Aphi) ='</span>); disp(em.coord.vecC2Sph(A0, [0 5 0]))
+disp(<span class="string">'at (4, 0, 0), (Ar, Atheta, Aphi) ='</span>); disp(em.coord.vecC2Sph(A0, [4 0 0]))
+
+<span class="comment">% The components change even with the same A0 becuase the r vectors are at</span>
+<span class="comment">% different locations. When expressing A0 in spherical coordinates the</span>
+<span class="comment">% source vector changes position of the converted coordinates. When you</span>
+<span class="comment">% convert back to cartesian plane the two positions convert back to A0.</span>
+</pre>
+<pre class="codeoutput">at (0, 5, 0), (Ar, Atheta, Aphi) =
+    3.0000    0.0000   -2.0000
+
+at (4, 0, 0), (Ar, Atheta, Aphi) =
+    2.0000    0.0000    3.0000
+
+</pre>
+<h2 id="7">Interpretation</h2>
+<p>Carissa McWilliams and Amelia Harris what class of bug does the roundtrip test catch, and what class does it miss. Name the invariant that catches what the roundtrip misses, and say why it is reference free.</p>
+<h2 id="8">Problems encountered</h2>
+<p>Carissa McWilliams and Amelia Harris honest account, or NONE. Some common errors that appeared in tests where not expressing my point and vector conversions as empty N x3 arrays and as separate or A values. This affect my random 1000 x 3 test which restricted the program from testing of the eight functions works properly. I also didn't have a single output for my point conversion function which lead to another error which interfered with my matrix multiplication.</p>
+<h2 id="9">Full test suite</h2>
+<pre class="codeinput">runTests
+</pre>
+<pre class="codeoutput">
+EECE 306 toolbox test suite
+--------------------------------------------------------------
+  test_lab01 checks complete
+  PASS  test_lab01            0.02 s
+  PASS  test_lab02            0.01 s
+--------------------------------------------------------------
+  2 passed, 0 failed, 2 total
+  All tests passing.
+
+</pre>
+<p class="footer">
+<br>
+<a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2025a</a>
+<br>
+</p>
+</div>
+<!--
+##### SOURCE BEGIN #####
+%% EECE 306 Lab 2 notebook. Coordinate Systems, Points and Vector Components
+% *Team 3.* Carissa McWilliams and Ameila Harris
+
+% Fill in every TODO, run |publish('Lab02_notebook.m')| from the toolbox
+% root, print the HTML to PDF, three to five pages.
+
+%% Setup
+clear; close all;
+rng(306);
+
+%% Point roundtrips, 1000 random points
+r = randn(1000,3);
+esph = max(em.vec.mag(em.coord.sph2c(em.coord.c2sph(r)) - r));
+ecyl = max(em.vec.mag(em.coord.cyl2c(em.coord.c2cyl(r)) - r));
+fprintf('spherical   roundtrip max error = %.3e\n', esph);
+fprintf('cylindrical roundtrip max error = %.3e\n', ecyl);
+
+%% Poles and the phi convention
+disp('c2sph([0 0 1])  ='); disp(em.coord.c2sph([0 0 1]))
+disp('c2sph([0 0 -1]) ='); disp(em.coord.c2sph([0 0 -1]))
+q = [ 1 1 0; -1 1 0; -1 -1 0; 1 -1 0 ];
+p = em.coord.c2cyl(q);
+fprintf('phi in the four quadrants = %.4f %.4f %.4f %.4f rad\n', p(:,2));
+fprintf('all inside [0, 2*pi) = %d\n', all(p(:,2) >= 0 & p(:,2) < 2*pi));
+
+%% Vector component roundtrips and the invariant
+A  = randn(1000,3);
+As = em.coord.vecC2Sph(A, r);
+ev = max(em.vec.mag(em.coord.vecSph2C(As, r) - A));
+em_ = max(abs(em.vec.mag(As) - em.vec.mag(A)));
+fprintf('vector roundtrip (spherical pair) max error = %.3e\n', ev);
+fprintf('magnitude change under conversion max       = %.3e\n', em_);
+Ac = em.coord.vecC2Cyl(A, r);
+ev2 = max(em.vec.mag(em.coord.vecCyl2C(Ac, r) - A));
+fprintf('vector roundtrip (cylindrical pair) max error = %.3e\n', ev2);
+
+%% The two position demonstration
+% The same Cartesian vector A = 2x + 3y, expressed in spherical
+% components at two different positions.
+A0 = [2 3 0];
+disp('at (0, 5, 0), (Ar, Atheta, Aphi) ='); disp(em.coord.vecC2Sph(A0, [0 5 0]))
+disp('at (4, 0, 0), (Ar, Atheta, Aphi) ='); disp(em.coord.vecC2Sph(A0, [4 0 0]))
+
+% The components change even with the same A0 becuase the r vectors are at
+% different locations. When expressing A0 in spherical coordinates the
+% source vector changes position of the converted coordinates. When you
+% convert back to cartesian plane the two positions convert back to A0.
+
+
+
+%% Interpretation
+% Carissa McWilliams and Amelia Harris what class of bug does the roundtrip test catch, and what class
+% does it miss. Name the invariant that catches what the roundtrip
+% misses, and say why it is reference free.
+
+%% Problems encountered
+% Carissa McWilliams and Amelia Harris honest account, or NONE.
+% Some common errors that appeared in tests where not expressing my point
+% and vector conversions as empty N x3 arrays and as separate or A
+% values. This affect my random 1000 x 3 test which restricted the program
+% from testing of the eight functions works properly. I also didn't have a
+% single output for my point conversion function which lead to another error
+% which interfered with my matrix multiplication.
+%% Full test suite
+runTests
+
+##### SOURCE END #####
+-->
+</body>
+</html>

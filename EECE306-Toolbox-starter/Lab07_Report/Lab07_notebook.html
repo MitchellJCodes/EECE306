@@ -1,0 +1,496 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      -->
+<title>EECE 306 Lab 7 notebook. Writing Your Own Poisson Solver</title>
+<meta name="generator" content="MATLAB 25.1">
+<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/">
+<meta name="DC.date" content="2026-10-14">
+<meta name="DC.source" content="Lab07_notebook.m">
+<style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style>
+</head>
+<body>
+<div class="content">
+<h1>EECE 306 Lab 7 notebook. Writing Your Own Poisson Solver</h1>
+<!--introduction-->
+<p>
+<b>Team 3.</b> Carissa McWilliams, Mitch Nazareth, and Amelia Harris</p>
+<!--/introduction-->
+<h2>Contents</h2>
+<div>
+<ul>
+<li>
+<a href="#1">Setup</a>
+</li>
+<li>
+<a href="#2">Interpretation</a>
+</li>
+<li>
+<a href="#3">Full test suite</a>
+</li>
+</ul>
+</div>
+<h2 id="1">Setup</h2>
+<pre class="codeinput">clear; close <span class="string">all</span>;
+e0 = em.const.eps0();
+
+<span class="comment">% The Manufactured Solution</span>
+<span class="comment">% The exact potential is chosen first, the source that produces it is</span>
+<span class="comment">% derived, and the solver must give the potential back.</span>
+Vex = @(X,Y) sin(pi*X) .* sin(pi*Y);
+rho = em.test.mms2d(Vex, 1);
+G = em.solve.grid2d([0 1], [0 1], 81, 81);
+mask = false(81,81); mask(1,:)=true; mask(end,:)=true; mask(:,1)=true; mask(:,end)=true;
+Vfix = zeros(81,81);
+[Vs, info] = em.solve.poisson2d(G, rho, 1, mask, Vfix, struct(<span class="string">'method'</span>,<span class="string">'direct'</span>));
+err81 = max(abs(Vs(:) - Vex(G.X(:), G.Y(:))));
+fprintf(<span class="string">'MMS max error on the 81 x 81 grid = %.3e\n'</span>, err81);
+
+<span class="comment">% Convergence under grid refinement</span>
+Ns = [21 41 81 161]';
+errs = zeros(size(Ns));
+<span class="keyword">for</span> j = 1:numel(Ns)
+    n = Ns(j);
+    Gn = em.solve.grid2d([0 1], [0 1], n, n);
+    mk = false(n,n); mk(1,:)=true; mk(end,:)=true; mk(:,1)=true; mk(:,end)=true;
+    Vn = em.solve.poisson2d(Gn, rho, 1, mk, zeros(n,n), struct(<span class="string">'method'</span>,<span class="string">'direct'</span>));
+    errs(j) = max(abs(Vn(:) - Vex(Gn.X(:), Gn.Y(:))));
+    fprintf(<span class="string">'N = %3d   max error = %.3e\n'</span>, n, errs(j));
+<span class="keyword">end</span>
+opts = struct(<span class="string">'plot'</span>, false);
+p = em.test.convergence(@(N) errs(Ns == N), Ns, opts);
+fprintf(<span class="string">'observed order p = %.2f  (expect near 2 for the five point stencil)\n'</span>, p);
+
+<span class="comment">% Three iterations and a direct solve</span>
+n = 41;
+Gn = em.solve.grid2d([0 1], [0 1], n, n);
+mk = false(n,n); mk(1,:)=true; mk(end,:)=true; mk(:,1)=true; mk(:,end)=true;
+Vf = zeros(n,n);
+<span class="comment">% A point by point sweep in an interpreted language is slow, and Jacobi</span>
+<span class="comment">% needs thousands of them. It is therefore cut off at 3000 iterations on</span>
+<span class="comment">% purpose. The residual histories tell the story long before then.</span>
+methods = {<span class="string">'jacobi'</span>, <span class="string">'gs'</span>, <span class="string">'sor'</span>};
+maxits  = [3000 10000 10000];
+figure; hold <span class="string">on</span>
+<span class="keyword">for</span> k = 1:3
+    o = struct(<span class="string">'method'</span>, methods{k}, <span class="string">'tol'</span>, 1e-6, <span class="string">'maxit'</span>, maxits(k));
+    <span class="keyword">if</span> strcmp(methods{k}, <span class="string">'sor'</span>), o.omega = 2/(1+sin(pi/(n-1))); <span class="keyword">end</span>
+    [Vk, ik] = em.solve.poisson2d(Gn, rho, 1, mk, Vf, o);
+    semilogy(ik.resHist)
+    fprintf(<span class="string">'%-7s iterations = %5d\n'</span>, methods{k}, ik.iter);
+<span class="keyword">end</span>
+set(gca, <span class="string">'YScale'</span>, <span class="string">'log'</span>); grid <span class="string">on</span>; legend(methods)
+xlabel(<span class="string">'iteration'</span>); ylabel(<span class="string">'residual'</span>)
+title(<span class="string">'Three iterative methods on the same 41 x 41 problem'</span>)
+
+<span class="comment">% The Omega Scan on Two Grids</span>
+<span class="comment">% The handout asks for a scan from 1.0 to 1.99, repeated on a grid twice</span>
+<span class="comment">% as fine. The sample points are spaced coarsely at the flat low end and</span>
+<span class="comment">% densely near the top, where the sharp minimum and the blowup past it</span>
+<span class="comment">% both live. The tolerance is relaxed to 1e-4, the scan is after the</span>
+<span class="comment">% location of the minimum and that location does not move with the depth</span>
+<span class="comment">% of the solve.</span>
+figure; hold <span class="string">on</span>
+<span class="keyword">for</span> n = [31 61]
+    Gn = em.solve.grid2d([0 1], [0 1], n, n);
+    mk = false(n,n); mk(1,:)=true; mk(end,:)=true; mk(:,1)=true; mk(:,end)=true;
+    om = [1.0 1.4 1.7 1.85 1.90 1.95 1.99];
+    it = zeros(size(om));
+    <span class="keyword">for</span> j = 1:numel(om)
+        [~, ij] = em.solve.poisson2d(Gn, rho, 1, mk, zeros(n,n), <span class="keyword">...</span>
+            struct(<span class="string">'method'</span>,<span class="string">'sor'</span>,<span class="string">'tol'</span>,1e-4,<span class="string">'maxit'</span>,20000,<span class="string">'omega'</span>,om(j)));
+        it(j) = ij.iter;
+    <span class="keyword">end</span>
+    plot(om, it, <span class="string">'o-'</span>)
+    [~, jb] = min(it);
+    fprintf(<span class="string">'n = %3d   best omega about %.2f   theory 2/(1+sin(pi h)) = %.3f\n'</span>, <span class="keyword">...</span>
+        n, om(jb), 2/(1+sin(pi/(n-1))));
+<span class="keyword">end</span>
+grid <span class="string">on</span>; legend(<span class="string">'31 x 31'</span>, <span class="string">'61 x 61'</span>)
+xlabel(<span class="string">'omega'</span>); ylabel(<span class="string">'iterations to tolerance'</span>)
+title(<span class="string">'SOR is sharp, the best omega moves with the grid'</span>)
+
+<span class="comment">% Timing, Iterative Against Direct</span>
+Nt = [41 61 81];
+td = zeros(size(Nt)); ts = zeros(size(Nt));
+<span class="keyword">for</span> k = 1:numel(Nt)
+    n = Nt(k);
+    Gn = em.solve.grid2d([0 1], [0 1], n, n);
+    mk = false(n,n); mk(1,:)=true; mk(end,:)=true; mk(:,1)=true; mk(:,end)=true;
+    tic; em.solve.poisson2d(Gn, rho, 1, mk, zeros(n,n), struct(<span class="string">'method'</span>,<span class="string">'direct'</span>)); td(k) = toc;
+    tic; em.solve.poisson2d(Gn, rho, 1, mk, zeros(n,n), <span class="keyword">...</span>
+        struct(<span class="string">'method'</span>,<span class="string">'sor'</span>,<span class="string">'tol'</span>,1e-6,<span class="string">'maxit'</span>,40000,<span class="string">'omega'</span>,2/(1+sin(pi/(n-1))))); ts(k) = toc;
+    fprintf(<span class="string">'N = %3d   direct %.3f s   SOR %.3f s\n'</span>, n, td(k), ts(k));
+<span class="keyword">end</span>
+figure; loglog(Nt, td, <span class="string">'o-'</span>, Nt, ts, <span class="string">'s-'</span>); grid <span class="string">on</span>
+xlabel(<span class="string">'grid size N'</span>); ylabel(<span class="string">'wall time (s)'</span>)
+legend(<span class="string">'direct'</span>, <span class="string">'SOR at optimal omega'</span>, <span class="string">'location'</span>, <span class="string">'northwest'</span>)
+title(<span class="string">'Cost against grid size'</span>)
+
+<span class="comment">% Carissa McWilliams, Mitch Nazareth, and Amelia Harris one or two sentences. On grids this small the direct method wins outright. Name the two growth rates, and say at what problem size the trend claims the tables turn.</span>
+
+<span class="comment">% The direct solver and SOR are two numerical methods with computational</span>
+<span class="comment">% growth rates that describe how their runtimes increase as the total</span>
+<span class="comment">% number of grid points, n, increases in a 2D system.</span>
+
+<span class="comment">% A Laplace Sanity Pair</span>
+<span class="comment">% One edge held at 1, the opposite at 0, Neumann on the other two. The</span>
+<span class="comment">% answer must be a straight ramp, and the interior must hold no extremum.</span>
+
+n = 41;
+Gn = em.solve.grid2d([0 1], [0 1], n, n);
+mk = false(n,n); mk(:,1) = true; mk(:,end) = true;
+Vf = zeros(n,n); Vf(:,1) = 1;
+VL = em.solve.poisson2d(Gn, 0, 1, mk, Vf, struct(<span class="string">'method'</span>,<span class="string">'direct'</span>));
+ramp = repmat(linspace(1, 0, n), n, 1);
+fprintf(<span class="string">'max deviation from the linear ramp = %.3e\n'</span>, max(abs(VL(:) - ramp(:))));
+inner = VL(2:end-1, 2:end-1);
+fprintf(<span class="string">'interior range [%.4f, %.4f] inside boundary range [0, 1] = %d\n'</span>, <span class="keyword">...</span>
+    min(inner(:)), max(inner(:)), min(inner(:)) &gt;= 0 &amp;&amp; max(inner(:)) &lt;= 1);
+
+<span class="comment">% Gauss's Law Closes the Loop</span>
+<span class="comment">% A block of charge in a grounded box. The flux of E through a rectangle</span>
+<span class="comment">% enclosing the block must equal the enclosed charge over eps0.</span>
+n = 121;
+Gn = em.solve.grid2d([-1 1], [-1 1], n, n);
+mk = false(n,n); mk(1,:)=true; mk(end,:)=true; mk(:,1)=true; mk(:,end)=true;
+rhoB = @(X,Y) 1e-8 * (abs(X) &lt; 0.25 &amp; abs(Y) &lt; 0.25);
+VB = em.solve.poisson2d(Gn, rhoB, 1, mk, zeros(n,n), struct(<span class="string">'method'</span>,<span class="string">'direct'</span>));
+
+<span class="comment">% Linear interpolation is used, Octave's spline path refuses scattered</span>
+<span class="comment">% query points. The gradient step is half a cell so the difference reads</span>
+<span class="comment">% the local slope of the interpolant.</span>
+Vh = @(r) interp2(Gn.X, Gn.Y, VB, r(:,1), r(:,2), <span class="string">'linear'</span>);
+Eh = @(r) -em.op.grad(Vh, r, Gn.hx/2);
+edges = { @(t)[t -0.6+0*t 0*t], [0 -1 0]; @(t)[0.6+0*t t 0*t], [1 0 0]; <span class="keyword">...</span>
+          @(t)[t 0.6+0*t 0*t], [0 1 0];  @(t)[-0.6+0*t t 0*t], [-1 0 0] };
+flux = 0;
+<span class="keyword">for</span> k = 1:4
+    [pos, w] = em.quad.line(edges{k,1}, [-0.6 0.6], 200);
+    En = Eh(pos) * edges{k,2}';
+    flux = flux + sum(En .* w);
+<span class="keyword">end</span>
+Qenc = 1e-8 * 0.5 * 0.5;
+fprintf(<span class="string">'flux of E through the rectangle = %.4e\n'</span>, flux);
+fprintf(<span class="string">'enclosed charge over eps0       = %.4e\n'</span>, Qenc/e0);
+fprintf(<span class="string">'relative difference             = %.2e\n'</span>, abs(flux - Qenc/e0)/(Qenc/e0));
+</pre>
+<pre class="codeoutput">MMS max error on the 81 x 81 grid = 1.285e-04
+N =  21   max error = 2.059e-03
+N =  41   max error = 5.142e-04
+N =  81   max error = 1.285e-04
+N = 161   max error = 3.212e-05
+observed order p = 2.04  (expect near 2 for the five point stencil)
+jacobi  iterations =  2604
+gs      iterations =  1415
+sor     iterations =   102
+n =  31   best omega about 1.85   theory 2/(1+sin(pi h)) = 1.811
+n =  61   best omega about 1.90   theory 2/(1+sin(pi h)) = 1.901
+N =  41   direct 0.006 s   SOR 0.005 s
+N =  61   direct 0.009 s   SOR 0.015 s
+N =  81   direct 0.016 s   SOR 0.030 s
+max deviation from the linear ramp = 7.772e-16
+interior range [0.0250, 0.9750] inside boundary range [0, 1] = 1
+flux of E through the rectangle = 2.6384e+02
+enclosed charge over eps0       = 2.8235e+02
+relative difference             = 6.56e-02
+</pre>
+<img vspace="5" hspace="5" src="Lab07_notebook_01.png" alt=""> <img vspace="5" hspace="5" src="Lab07_notebook_02.png" alt=""> <img vspace="5" hspace="5" src="Lab07_notebook_03.png" alt=""> <h2 id="2">Interpretation</h2>
+<p>Carissa McWilliams, Mitch Nazareth, and Amelia Harris three to six sentences. The manufactured solution was reproduced and the observed order matched the stencil. Say what an observed order of 1 would have told you, and name the mistake that classically causes it.</p>
+<pre class="codeinput">
+<span class="comment">% An observed order of 1 would indicate first-order accuracy, meaning the numerical error decreases by</span>
+<span class="comment">% approximately half when the grid spacing is halved. This commonly occurs</span>
+<span class="comment">% when a first-order approximation is used at the boundaries instead of a</span>
+<span class="comment">% second-order approximation, reducing the overall convergence rate.</span>
+<span class="comment">% Therefore, our results demonstrate that the Poisson solver accurately</span>
+<span class="comment">% approximates the potential as the grid resolution increases.</span>
+
+<span class="comment">% Problems Encountered</span>
+<span class="comment">% NONE</span>
+</pre>
+<h2 id="3">Full test suite</h2>
+<pre class="codeinput">runTests
+</pre>
+<pre class="codeoutput">
+EECE 306 toolbox test suite
+--------------------------------------------------------------
+  test_lab01 checks complete
+  PASS  test_lab01            0.04 s
+  PASS  test_lab02            0.03 s
+  PASS  test_lab03            0.02 s
+  PASS  test_lab04            0.05 s
+  PASS  test_lab05            0.09 s
+Test 1 passed: Point charge potential
+Additional test passed: Superposition
+Test 2 passed: E = -grad(V)
+Source 1, Path 1: C = 1.632727e-11
+Source 1, Path 2: C = -7.748910e-11
+Source 1, Path 3: C = -3.812791e-11
+Source 2, Path 1: C = 4.072621e-12
+Source 2, Path 2: C = 1.249403e-12
+Source 2, Path 3: C = -9.679293e-12
+Source 3, Path 1: C = 7.818250e-10
+Source 3, Path 2: C = 2.382805e-10
+Source 3, Path 3: C = -1.847925e-09
+Test 3 passed: Nine closed-path circulations
+Test 4 passed: Non-conservative field
+Test 5 passed: Potential difference
+Warning: Source extent grows with element count. Potential referenced to
+infinity may diverge. 
+Test 6 passed: Growing-source warning
+Visualization completed
+All six Lab 6 tests passed!
+  PASS  test_lab06            1.05 s
+Test 1 passed: MMS error = 8.225e-05
+Test 2 passed: convergence order = 2.002
+Test 3 passed: Jacobi, GS, SOR, direct agree
+Test 4 passed: iterations SOR=118, GS=782, Jacobi=1505
+Test 5 passed: mixed BC linear profile error 7.772e-16
+Test 6 passed: no source-free interior extrema beyond BC bounds
+Test 7 passed: Gauss law relative error = 1.128e-02
+All seven Lab 7 tests passed!
+  PASS  test_lab07            0.15 s
+--------------------------------------------------------------
+  7 passed, 0 failed, 7 total
+  All tests passing.
+
+</pre>
+<img vspace="5" hspace="5" src="Lab07_notebook_04.png" alt=""> <img vspace="5" hspace="5" src="Lab07_notebook_05.png" alt=""> <p class="footer">
+<br>
+<a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2025a</a>
+<br>
+</p>
+</div>
+<!--
+##### SOURCE BEGIN #####
+%% EECE 306 Lab 7 notebook. Writing Your Own Poisson Solver
+% *Team 3.* Carissa McWilliams, Mitch Nazareth, and Amelia Harris 
+
+%% Setup
+clear; close all;
+e0 = em.const.eps0();
+
+% The Manufactured Solution
+% The exact potential is chosen first, the source that produces it is
+% derived, and the solver must give the potential back.
+Vex = @(X,Y) sin(pi*X) .* sin(pi*Y);
+rho = em.test.mms2d(Vex, 1);
+G = em.solve.grid2d([0 1], [0 1], 81, 81);
+mask = false(81,81); mask(1,:)=true; mask(end,:)=true; mask(:,1)=true; mask(:,end)=true;
+Vfix = zeros(81,81);
+[Vs, info] = em.solve.poisson2d(G, rho, 1, mask, Vfix, struct('method','direct'));
+err81 = max(abs(Vs(:) - Vex(G.X(:), G.Y(:))));
+fprintf('MMS max error on the 81 x 81 grid = %.3e\n', err81);
+
+% Convergence under grid refinement
+Ns = [21 41 81 161]';
+errs = zeros(size(Ns));
+for j = 1:numel(Ns)
+    n = Ns(j);
+    Gn = em.solve.grid2d([0 1], [0 1], n, n);
+    mk = false(n,n); mk(1,:)=true; mk(end,:)=true; mk(:,1)=true; mk(:,end)=true;
+    Vn = em.solve.poisson2d(Gn, rho, 1, mk, zeros(n,n), struct('method','direct'));
+    errs(j) = max(abs(Vn(:) - Vex(Gn.X(:), Gn.Y(:))));
+    fprintf('N = %3d   max error = %.3e\n', n, errs(j));
+end
+opts = struct('plot', false);
+p = em.test.convergence(@(N) errs(Ns == N), Ns, opts);
+fprintf('observed order p = %.2f  (expect near 2 for the five point stencil)\n', p);
+
+% Three iterations and a direct solve
+n = 41;
+Gn = em.solve.grid2d([0 1], [0 1], n, n);
+mk = false(n,n); mk(1,:)=true; mk(end,:)=true; mk(:,1)=true; mk(:,end)=true;
+Vf = zeros(n,n);
+% A point by point sweep in an interpreted language is slow, and Jacobi
+% needs thousands of them. It is therefore cut off at 3000 iterations on
+% purpose. The residual histories tell the story long before then.
+methods = {'jacobi', 'gs', 'sor'};
+maxits  = [3000 10000 10000];
+figure; hold on
+for k = 1:3
+    o = struct('method', methods{k}, 'tol', 1e-6, 'maxit', maxits(k));
+    if strcmp(methods{k}, 'sor'), o.omega = 2/(1+sin(pi/(n-1))); end
+    [Vk, ik] = em.solve.poisson2d(Gn, rho, 1, mk, Vf, o);
+    semilogy(ik.resHist)
+    fprintf('%-7s iterations = %5d\n', methods{k}, ik.iter);
+end
+set(gca, 'YScale', 'log'); grid on; legend(methods)
+xlabel('iteration'); ylabel('residual')
+title('Three iterative methods on the same 41 x 41 problem')
+
+% The Omega Scan on Two Grids
+% The handout asks for a scan from 1.0 to 1.99, repeated on a grid twice
+% as fine. The sample points are spaced coarsely at the flat low end and
+% densely near the top, where the sharp minimum and the blowup past it
+% both live. The tolerance is relaxed to 1e-4, the scan is after the
+% location of the minimum and that location does not move with the depth
+% of the solve.
+figure; hold on
+for n = [31 61]
+    Gn = em.solve.grid2d([0 1], [0 1], n, n);
+    mk = false(n,n); mk(1,:)=true; mk(end,:)=true; mk(:,1)=true; mk(:,end)=true;
+    om = [1.0 1.4 1.7 1.85 1.90 1.95 1.99];
+    it = zeros(size(om));
+    for j = 1:numel(om)
+        [~, ij] = em.solve.poisson2d(Gn, rho, 1, mk, zeros(n,n), ...
+            struct('method','sor','tol',1e-4,'maxit',20000,'omega',om(j)));
+        it(j) = ij.iter;
+    end
+    plot(om, it, 'o-')
+    [~, jb] = min(it);
+    fprintf('n = %3d   best omega about %.2f   theory 2/(1+sin(pi h)) = %.3f\n', ...
+        n, om(jb), 2/(1+sin(pi/(n-1))));
+end
+grid on; legend('31 x 31', '61 x 61')
+xlabel('omega'); ylabel('iterations to tolerance')
+title('SOR is sharp, the best omega moves with the grid')
+
+% Timing, Iterative Against Direct
+Nt = [41 61 81];
+td = zeros(size(Nt)); ts = zeros(size(Nt));
+for k = 1:numel(Nt)
+    n = Nt(k);
+    Gn = em.solve.grid2d([0 1], [0 1], n, n);
+    mk = false(n,n); mk(1,:)=true; mk(end,:)=true; mk(:,1)=true; mk(:,end)=true;
+    tic; em.solve.poisson2d(Gn, rho, 1, mk, zeros(n,n), struct('method','direct')); td(k) = toc;
+    tic; em.solve.poisson2d(Gn, rho, 1, mk, zeros(n,n), ...
+        struct('method','sor','tol',1e-6,'maxit',40000,'omega',2/(1+sin(pi/(n-1))))); ts(k) = toc;
+    fprintf('N = %3d   direct %.3f s   SOR %.3f s\n', n, td(k), ts(k));
+end
+figure; loglog(Nt, td, 'o-', Nt, ts, 's-'); grid on
+xlabel('grid size N'); ylabel('wall time (s)')
+legend('direct', 'SOR at optimal omega', 'location', 'northwest')
+title('Cost against grid size')
+
+% Carissa McWilliams, Mitch Nazareth, and Amelia Harris one or two sentences. On grids this small the direct method wins outright. Name the two growth rates, and say at what problem size the trend claims the tables turn.
+
+% The direct solver and SOR are two numerical methods with computational
+% growth rates that describe how their runtimes increase as the total
+% number of grid points, n, increases in a 2D system.
+
+% A Laplace Sanity Pair
+% One edge held at 1, the opposite at 0, Neumann on the other two. The
+% answer must be a straight ramp, and the interior must hold no extremum.
+
+n = 41;
+Gn = em.solve.grid2d([0 1], [0 1], n, n);
+mk = false(n,n); mk(:,1) = true; mk(:,end) = true;
+Vf = zeros(n,n); Vf(:,1) = 1;
+VL = em.solve.poisson2d(Gn, 0, 1, mk, Vf, struct('method','direct'));
+ramp = repmat(linspace(1, 0, n), n, 1);
+fprintf('max deviation from the linear ramp = %.3e\n', max(abs(VL(:) - ramp(:))));
+inner = VL(2:end-1, 2:end-1);
+fprintf('interior range [%.4f, %.4f] inside boundary range [0, 1] = %d\n', ...
+    min(inner(:)), max(inner(:)), min(inner(:)) >= 0 && max(inner(:)) <= 1);
+
+% Gauss's Law Closes the Loop
+% A block of charge in a grounded box. The flux of E through a rectangle
+% enclosing the block must equal the enclosed charge over eps0.
+n = 121;
+Gn = em.solve.grid2d([-1 1], [-1 1], n, n);
+mk = false(n,n); mk(1,:)=true; mk(end,:)=true; mk(:,1)=true; mk(:,end)=true;
+rhoB = @(X,Y) 1e-8 * (abs(X) < 0.25 & abs(Y) < 0.25);
+VB = em.solve.poisson2d(Gn, rhoB, 1, mk, zeros(n,n), struct('method','direct'));
+
+% Linear interpolation is used, Octave's spline path refuses scattered
+% query points. The gradient step is half a cell so the difference reads
+% the local slope of the interpolant.
+Vh = @(r) interp2(Gn.X, Gn.Y, VB, r(:,1), r(:,2), 'linear');
+Eh = @(r) -em.op.grad(Vh, r, Gn.hx/2);
+edges = { @(t)[t -0.6+0*t 0*t], [0 -1 0]; @(t)[0.6+0*t t 0*t], [1 0 0]; ...
+          @(t)[t 0.6+0*t 0*t], [0 1 0];  @(t)[-0.6+0*t t 0*t], [-1 0 0] };
+flux = 0;
+for k = 1:4
+    [pos, w] = em.quad.line(edges{k,1}, [-0.6 0.6], 200);
+    En = Eh(pos) * edges{k,2}';
+    flux = flux + sum(En .* w);
+end
+Qenc = 1e-8 * 0.5 * 0.5;
+fprintf('flux of E through the rectangle = %.4e\n', flux);
+fprintf('enclosed charge over eps0       = %.4e\n', Qenc/e0);
+fprintf('relative difference             = %.2e\n', abs(flux - Qenc/e0)/(Qenc/e0));
+%% Interpretation
+% Carissa McWilliams, Mitch Nazareth, and Amelia Harris three to six sentences. The manufactured solution was reproduced and the observed order matched the stencil. Say what an observed order of 1 would have told you, and name the mistake that classically causes it.
+
+% An observed order of 1 would indicate first-order accuracy, meaning the numerical error decreases by
+% approximately half when the grid spacing is halved. This commonly occurs
+% when a first-order approximation is used at the boundaries instead of a
+% second-order approximation, reducing the overall convergence rate.
+% Therefore, our results demonstrate that the Poisson solver accurately
+% approximates the potential as the grid resolution increases.
+
+% Problems Encountered
+% NONE
+%% Full test suite
+runTests
+
+##### SOURCE END #####
+-->
+</body>
+</html>
