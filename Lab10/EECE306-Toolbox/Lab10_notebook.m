@@ -1,10 +1,5 @@
 %% EECE 306 Lab 10 notebook. Ampere's Circuital Law, Curl, and the Magnetic Gauss Law
-% *Team NN.* TODO replace with your team number and member names.
-%
-% Fill in every TODO, run |publish('Lab10_notebook.m')| from the toolbox
-% root, print the HTML to PDF, three to five pages. The coax cell below
-% is the slowest computation of the semester so far, expect about a
-% minute.
+% *Team 3.* Carissa McWilliams, Mitchell Nazareth, Amelia Harris, and Hasan Ali.
 
 %% Setup
 clear; close all;
@@ -112,19 +107,32 @@ figure;
 em.viz.streamlines(@(r) em.field.H(pair, r), [-1.2 1.2], [-1.2 1.2], ...
     [[0.3+0.12*cosd(th) 0.12*sind(th)]; [-0.3+0.12*cosd(th) 0.12*sind(th)]], ...
     struct('title', 'Antiparallel pair'));
-% TODO one paragraph. Every line in both figures closes on itself and
-% none begins or ends anywhere. Connect that to div B = 0, and contrast
-% it with the Lab 3 field, whose lines begin and end on charges because
-% div D = rho. Also say what a field line plot fails to show, which the
-% Lab 3 quiver comparison already taught.
+
+% Field lines in both figures form closed loops, which agrees with
+%  the fact that the divergence of the magnetic flux density is zero.
+%  Unlike electric fields, magnetic fields do not have sources or sinks
+% where field lines can begin or end. In Lab 3, electric field lines could
+% begin on positive charges and end on negative charges because electric
+% charge creates divergence in the electric displacement field. The magnetic
+% field plots show the direction and overall shape of the field, but they
+% do not give an accurate numerical representation of its magnitude.
+% The quiver plots from Lab 3 were useful for comparing both the direction
+% and magnitude of a field at specific points.
 
 %% Interpretation
-% TODO three to six sentences. Ampere's law was checked in four regions
-% with one geometry. State why the region outside the shield is the most
-% informative of the four.
+% The coaxial cable allowed Ampere's law to be tested in four different regions
+% using the same geometry. Inside the inner conductor, the enclosed current
+% increases with the area of the Amperian loop. Between the conductors,
+% the loop encloses the full inner current, while inside the outer shield the
+% enclosed current gradually decreases as the return current is included.
+% Outside the shield, the total enclosed current is zero because the inner
+% and outer currents are equal and opposite. This last region is especially
+% important because it shows that the magnetic field can exist outside the
+% cable while its total circulation is still zero. This confirms that the
+% return current cancels the enclosed current, as predicted by Ampere's law.
 
 %% Problems encountered
-% TODO honest account, or NONE.
+% The filament model approximates a continuous current distribution using individual line currents, so small differences were expected near the conductor edges. Choosing an appropriate step size for the curl calculation was also important because values that were too small produced less reliable numerical results. After adjusting the calculations, the results were consistent with the expected electromagnetic relationships.
 
 %% Full test suite
 runTests

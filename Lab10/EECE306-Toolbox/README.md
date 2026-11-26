@@ -45,4 +45,4 @@ and warnings.
 
 ## Current status
 
-Implemented magnetic field H.m and completed Lab09.
+Implemented magnetic field H.m and completed Lab09. Lab10 adds numerical curl and planar streamline visualization; the Lab10 notebook remains unchanged.
